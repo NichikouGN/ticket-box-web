@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1";
 
 interface FetchOptions extends RequestInit {
   skipAuth?: boolean;
@@ -121,6 +121,13 @@ export const api = {
   put: <T>(endpoint: string, body?: unknown, options?: FetchOptions) =>
     apiFetch<T>(endpoint, {
       method: "PUT",
+      body: body ? JSON.stringify(body) : undefined,
+      ...options,
+    }),
+
+  patch: <T>(endpoint: string, body?: unknown, options?: FetchOptions) =>
+    apiFetch<T>(endpoint, {
+      method: "PATCH",
       body: body ? JSON.stringify(body) : undefined,
       ...options,
     }),

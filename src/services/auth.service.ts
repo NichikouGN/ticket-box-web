@@ -52,5 +52,5 @@ export const authService = {
       { skipAuth: true }
     ),
 
-  getProfile: () => api.get<ProfileResponse>("/profile"),
+  getProfile: () => api.get<ProfileResponse>("/users/profile"),
 };
