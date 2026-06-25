@@ -38,7 +38,7 @@ export default function OrganizerDashboardPage() {
     try {
       let res;
       if (action === 'publish') res = await concertService.publishConcert(id);
-      else if (action === 'cancel') res = await concertService.cancelConcert(id, "Organizer cancelled");
+      else if (action === 'cancel') res = await concertService.cancelConcert(id);
       else res = await concertService.restoreConcert(id);
 
       if (res.success) {

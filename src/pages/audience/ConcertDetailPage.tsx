@@ -7,6 +7,7 @@ import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import BuyTicketModal from "@/components/ticket/BuyTicketModal";
 
 export default function ConcertDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -14,9 +15,12 @@ export default function ConcertDetailPage() {
   const [ticketTypes, setTicketTypes] = useState<TicketTypeView[]>([]);
   const [stock, setStock] = useState<Record<string, number>>({});
   const [seatMapSvgUrl, setSeatMapSvgUrl] = useState<string | null>(null);
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Buy ticket modal state
+  const [selectedTicket, setSelectedTicket] = useState<TicketTypeView | null>(null);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -30,10 +34,12 @@ export default function ConcertDetailPage() {
           concertService.getConcertStock(id),
         ]);
 
-        if (detailRes.success) setConcert(detailRes.data);
+        if (detailRes.success) {
+          setConcert(detailRes.data);
+          setSeatMapSvgUrl(detailRes.data.seatMapSvgUrl);
+        }
         if (ticketsRes.success) {
           setTicketTypes(ticketsRes.data.ticketTypes);
-          setSeatMapSvgUrl(ticketsRes.data.seatMapSvgUrl);
         }
         if (stockRes.success) {
           const stockMap: Record<string, number> = {};
@@ -214,11 +220,12 @@ export default function ConcertDetailPage() {
                               <span className={`text-sm font-medium ${isSoldOut ? 'text-red-400' : currentStock < 20 ? 'text-orange-400' : 'text-emerald-400'}`}>
                                 {isSoldOut ? 'Sold Out' : currentStock < 20 ? `Only ${currentStock} left!` : 'Available'}
                               </span>
-                              <Button 
-                                variant={isSoldOut ? "secondary" : "gradient"} 
+                              <Button
+                                variant={isSoldOut ? "secondary" : "gradient"}
                                 disabled={isSoldOut}
+                                onClick={() => !isSoldOut && setSelectedTicket(ticket)}
                               >
-                                {isSoldOut ? 'Sold Out' : 'Select'}
+                                {isSoldOut ? 'Sold Out' : 'Buy Now'}
                               </Button>
                             </div>
                           </CardContent>
@@ -238,6 +245,18 @@ export default function ConcertDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Buy Ticket Modal */}
+      {selectedTicket && concert && (
+        <BuyTicketModal
+          isOpen={!!selectedTicket}
+          onClose={() => setSelectedTicket(null)}
+          concertId={concert.id}
+          concertTitle={concert.title}
+          ticketType={selectedTicket}
+          availableStock={stock[selectedTicket.id] ?? 0}
+        />
+      )}
     </AppLayout>
   );
 }

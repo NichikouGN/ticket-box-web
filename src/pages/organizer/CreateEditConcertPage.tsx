@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { Plus, Trash2, ArrowLeft, Loader2, Save } from "lucide-react";
-import { concertService, type CreateConcertInput, type TicketTypeInput } from "@/services/concert.service";
+import { Plus, Trash2, ArrowLeft, Loader2, Save, Upload, FileText, Check, X, RefreshCw } from "lucide-react";
+import { concertService, type CreateConcertInput, type TicketTypeInput, type Artist, type ArtistBioReviewItem } from "@/services/concert.service";
 import AppLayout from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -31,6 +31,28 @@ export default function CreateEditConcertPage() {
   const defaultTicket: TicketTypeInput = { name: "", price: 0, maxPerUser: 4, totalCapacity: 100 };
   const [ticketTypes, setTicketTypes] = useState<TicketTypeInput[]>([{ ...defaultTicket }]);
 
+  // AI Bio & Press Kit State
+  const [resolvedArtists, setResolvedArtists] = useState<Artist[]>([]);
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [isGeneratingBio, setIsGeneratingBio] = useState(false);
+  const [awaitingBios, setAwaitingBios] = useState<ArtistBioReviewItem[]>([]);
+  const [isLoadingBios, setIsLoadingBios] = useState(false);
+
+  const fetchAwaitingBios = async () => {
+    if (!id) return;
+    try {
+      setIsLoadingBios(true);
+      const res = await concertService.getAwaitingReviewBios(id);
+      if (res.success) {
+        setAwaitingBios(res.data || []);
+      }
+    } catch (err: any) {
+      console.error("Failed to load awaiting bios:", err);
+    } finally {
+      setIsLoadingBios(false);
+    }
+  };
+
   useEffect(() => {
     if (isEditMode && id) {
       const fetchConcert = async () => {
@@ -51,21 +73,37 @@ export default function CreateEditConcertPage() {
             setThumbnailUrl(data.thumbnailUrl || "");
             setSeatMapSvgUrl(data.seatMapSvgUrl || "");
             setArtists(data.artists.length ? data.artists : [""]);
+
+            // Resolve artist IDs from names
+            if (data.artists.length) {
+              const validNames = data.artists.filter((name: string) => name.trim() !== "");
+              if (validNames.length > 0) {
+                concertService.createArtists(validNames)
+                  .then(res => {
+                    if (res.success) {
+                      setResolvedArtists([
+                        ...(res.data.existingArtists || []),
+                        ...(res.data.newArtists || []),
+                      ]);
+                    }
+                  })
+                  .catch(err => console.error("Error resolving artists on load:", err));
+              }
+            }
           }
 
           if (ticketRes.success) {
-            // we don't get totalCapacity back from getConcertTickets in this view easily
-            // but for editing, we do our best. The backend currently replaces ticket types if passed.
-            // If the user doesn't want to change tickets, they might not pass them, but the schema requires it for create.
-            // Actually, updateConcertSchema has ticketTypes as optional.
             const tts = ticketRes.data.ticketTypes.map(t => ({
               name: t.name,
               price: t.price,
               maxPerUser: t.maxPerUser,
-              totalCapacity: 100 // placeholder since we don't have it in TicketTypeView
+              totalCapacity: 100 // placeholder
             }));
             if (tts.length) setTicketTypes(tts);
           }
+
+          // Fetch awaiting bios
+          await fetchAwaitingBios();
         } catch (error: any) {
           toast.error("Failed to load concert details");
           navigate("/organizer");
@@ -116,18 +154,71 @@ export default function CreateEditConcertPage() {
 
     setIsSubmitting(true);
     try {
+      let concertId = id;
       if (isEditMode && id) {
         await concertService.updateConcert(id, payload);
-        toast.success("Concert updated successfully");
       } else {
-        await concertService.createConcert(payload);
-        toast.success("Concert created successfully");
+        const res = await concertService.createConcert(payload);
+        concertId = res.data.concertId;
       }
+
+      // Create/resolve artists and link them to the concert
+      if (concertId) {
+        const artistRes = await concertService.createArtists(validArtists);
+        if (artistRes.success) {
+          const allArtists = [
+            ...(artistRes.data.existingArtists || []),
+            ...(artistRes.data.newArtists || []),
+          ];
+          const artistIds = allArtists.map((a) => a.id);
+          await concertService.linkArtistsToConcert(concertId, artistIds);
+        }
+      }
+
+      toast.success(isEditMode ? "Concert updated successfully" : "Concert created successfully");
       navigate("/organizer");
     } catch (err: any) {
       toast.error(err.message || "Failed to save concert");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleBioAction = async (artistId: string, status: "APPROVED" | "REJECTED") => {
+    if (!id) return;
+    try {
+      const res = await concertService.updateBioStatus(id, artistId, status);
+      if (res.success) {
+        toast.success(res.message);
+        fetchAwaitingBios();
+      }
+    } catch (err: any) {
+      toast.error(err.message || `Failed to ${status.toLowerCase()} bio`);
+    }
+  };
+
+  const handleGenerateBios = async () => {
+    if (!id) return;
+    if (!pdfFile) {
+      toast.error("Please select a PDF press kit file first");
+      return;
+    }
+    if (resolvedArtists.length === 0) {
+      toast.error("No artists resolved. Please make sure your lineup is saved.");
+      return;
+    }
+
+    setIsGeneratingBio(true);
+    try {
+      const artistIds = resolvedArtists.map(a => a.id);
+      await concertService.generateArtistBios(id, artistIds, pdfFile);
+      toast.success("AI Bio generation requested! Bios will appear below for review once complete.");
+      setPdfFile(null);
+      setTimeout(fetchAwaitingBios, 3000);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to generate biographies");
+    } finally {
+      setIsGeneratingBio(false);
     }
   };
 
@@ -220,6 +311,117 @@ export default function CreateEditConcertPage() {
               </Button>
             </CardContent>
           </Card>
+
+          {/* AI Press Kit & Biography (Only visible in Edit Mode) */}
+          {isEditMode && (
+            <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-violet-400" />
+                  AI Roster Biographies
+                </CardTitle>
+                <CardDescription>
+                  Upload an artist press kit (PDF) to generate biographies using Gemini AI. Make sure your artist names are saved first.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* PDF Upload */}
+                <div className="p-6 rounded-xl border border-dashed border-slate-700 bg-slate-800/20 flex flex-col items-center justify-center text-center">
+                  <Upload className="w-8 h-8 text-slate-500 mb-2" />
+                  <Label htmlFor="pdf-upload" className="cursor-pointer text-sm font-semibold text-violet-400 hover:text-violet-300 mb-1">
+                    {pdfFile ? pdfFile.name : "Select PDF Press Kit"}
+                  </Label>
+                  <p className="text-xs text-slate-550">Max size 10MB. Must be a PDF file.</p>
+                  <input
+                    id="pdf-upload"
+                    type="file"
+                    accept="application/pdf"
+                    className="hidden"
+                    onChange={(e) => {
+                      if (e.target.files?.[0]) {
+                        setPdfFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                  
+                  {pdfFile && (
+                    <Button 
+                      type="button" 
+                      variant="gradient" 
+                      size="sm" 
+                      className="mt-4"
+                      onClick={handleGenerateBios}
+                      disabled={isGeneratingBio}
+                    >
+                      {isGeneratingBio ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Generating Bios...
+                        </>
+                      ) : (
+                        "Upload & Generate Bios"
+                      )}
+                    </Button>
+                  )}
+                </div>
+
+                {/* Review Panel */}
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-sm font-semibold text-slate-300">Awaiting Review ({awaitingBios.length})</h3>
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 text-xs text-slate-400 hover:text-white"
+                      onClick={fetchAwaitingBios}
+                      disabled={isLoadingBios}
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 mr-1 ${isLoadingBios ? "animate-spin" : ""}`} />
+                      Refresh List
+                    </Button>
+                  </div>
+
+                  {awaitingBios.length > 0 ? (
+                    <div className="space-y-4">
+                      {awaitingBios.map((bio) => (
+                        <div key={bio.artistId} className="p-4 rounded-xl border border-slate-800 bg-slate-950/40 space-y-3">
+                          <div className="flex justify-between items-start">
+                            <span className="font-semibold text-white text-base">{bio.artistName}</span>
+                            <div className="flex gap-2">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
+                                onClick={() => handleBioAction(bio.artistId, "APPROVED")}
+                              >
+                                <Check className="w-4 h-4 mr-1" /> Approve
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                                onClick={() => handleBioAction(bio.artistId, "REJECTED")}
+                              >
+                                <X className="w-4 h-4 mr-1" /> Reject
+                              </Button>
+                            </div>
+                          </div>
+                          <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">{bio.aiBio}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-slate-500 py-4 text-center border border-slate-800 rounded-xl bg-slate-900/20">
+                      No bios awaiting review. Roster biographies will show up here for validation once generated.
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Tickets */}
           <Card>
