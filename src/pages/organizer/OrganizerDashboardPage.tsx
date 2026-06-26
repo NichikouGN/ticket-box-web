@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Edit, Globe, ArchiveRestore, Ban } from "lucide-react";
+import { Plus, Edit, Globe, ArchiveRestore, Ban, ShieldCheck } from "lucide-react";
 import { concertService, type ConcertListItem } from "@/services/concert.service";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -130,9 +130,16 @@ export default function OrganizerDashboardPage() {
                               </Button>
                             )}
                             {concert.status === 'PUBLISHED' && (
-                              <Button variant="ghost" size="sm" className="h-8 text-red-400 hover:text-red-300 hover:bg-red-500/10" onClick={() => handleAction('cancel', concert.id)}>
-                                <Ban className="w-4 h-4 mr-1.5" /> Cancel
-                              </Button>
+                              <>
+                                <Button asChild variant="ghost" size="sm" className="h-8 text-violet-400 hover:text-violet-300 hover:bg-violet-500/10">
+                                  <Link to={`/organizer/concerts/${concert.id}/checkin`}>
+                                    <ShieldCheck className="w-4 h-4 mr-1.5" /> Check-in
+                                  </Link>
+                                </Button>
+                                <Button variant="ghost" size="sm" className="h-8 text-red-400 hover:text-red-300 hover:bg-red-500/10" onClick={() => handleAction('cancel', concert.id)}>
+                                  <Ban className="w-4 h-4 mr-1.5" /> Cancel
+                                </Button>
+                              </>
                             )}
                             {concert.status === 'CANCELLED' && (
                               <Button variant="ghost" size="sm" className="h-8 text-orange-400 hover:text-orange-300 hover:bg-orange-500/10" onClick={() => handleAction('restore', concert.id)}>

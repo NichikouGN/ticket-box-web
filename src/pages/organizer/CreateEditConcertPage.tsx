@@ -27,7 +27,7 @@ export default function CreateEditConcertPage() {
   const [thumbnailUrl, setThumbnailUrl] = useState("");
   const [seatMapSvgUrl, setSeatMapSvgUrl] = useState("");
   const [artists, setArtists] = useState<string[]>([""]);
-  
+
   const defaultTicket: TicketTypeInput = { name: "", price: 0, maxPerUser: 4, totalCapacity: 100 };
   const [ticketTypes, setTicketTypes] = useState<TicketTypeInput[]>([{ ...defaultTicket }]);
 
@@ -61,7 +61,7 @@ export default function CreateEditConcertPage() {
             concertService.getOrganizerConcertDetail(id),
             concertService.getOrganizerConcertTickets(id)
           ]);
-          
+
           if (detailRes.success) {
             const data = detailRes.data;
             setTitle(data.title);
@@ -133,11 +133,11 @@ export default function CreateEditConcertPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Filter empty arrays
     const validArtists = artists.filter(a => a.trim() !== "");
     if (validArtists.length === 0) return toast.error("At least one artist is required");
-    
+
     const validTickets = ticketTypes.filter(t => t.name.trim() !== "");
     if (validTickets.length === 0) return toast.error("At least one ticket type is required");
 
@@ -236,7 +236,7 @@ export default function CreateEditConcertPage() {
         <Link to="/organizer" className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white mb-6">
           <ArrowLeft className="w-4 h-4" /> Back to Dashboard
         </Link>
-        
+
         <h1 className="text-3xl font-bold text-white mb-8">
           {isEditMode ? "Edit Event" : "Create New Event"}
         </h1>
@@ -295,10 +295,10 @@ export default function CreateEditConcertPage() {
             <CardContent className="space-y-4">
               {artists.map((artist, idx) => (
                 <div key={idx} className="flex items-center gap-3">
-                  <Input 
-                    value={artist} 
-                    onChange={e => handleArtistChange(idx, e.target.value)} 
-                    placeholder="Artist name" 
+                  <Input
+                    value={artist}
+                    onChange={e => handleArtistChange(idx, e.target.value)}
+                    placeholder="Artist name"
                     required={idx === 0}
                   />
                   <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveArtist(idx)} disabled={artists.length === 1} className="text-red-400 hover:text-red-300">
@@ -343,12 +343,12 @@ export default function CreateEditConcertPage() {
                       }
                     }}
                   />
-                  
+
                   {pdfFile && (
-                    <Button 
-                      type="button" 
-                      variant="gradient" 
-                      size="sm" 
+                    <Button
+                      type="button"
+                      variant="gradient"
+                      size="sm"
                       className="mt-4"
                       onClick={handleGenerateBios}
                       disabled={isGeneratingBio}
@@ -369,10 +369,10 @@ export default function CreateEditConcertPage() {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <h3 className="text-sm font-semibold text-slate-300">Awaiting Review ({awaitingBios.length})</h3>
-                    <Button 
-                      type="button" 
-                      variant="ghost" 
-                      size="sm" 
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
                       className="h-8 text-xs text-slate-400 hover:text-white"
                       onClick={fetchAwaitingBios}
                       disabled={isLoadingBios}
@@ -437,7 +437,7 @@ export default function CreateEditConcertPage() {
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pr-10">
                     <div className="space-y-2">
                       <Label>Ticket Name</Label>

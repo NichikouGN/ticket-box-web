@@ -21,6 +21,18 @@ npm run dev
 ```
 ## Versioning
 
+### [v1.2.0] - 2026-06-27
+- `[AUDIENCE]` Create UI for CheckinPage.
+- `[ORGANIZER]` Create UI for Edit concert.
+- Improve UI for Order and Payment.
+- Refactor some code.
+
+
+### [v1.1.0] - 2026-06-26
+- Create UI for ORGANIZER to create and manage concerts.
+- Create Home UI for AUDIENCE to buy tickets.
+- Create UI for next features (Order and Payment).
+
 ### [v1.0.0] - 2026-06-22
 - Signup forms.
 - Login forms.

@@ -13,10 +13,12 @@ import HomePage from "@/pages/HomePage";
 // Audience Pages
 import ConcertsPage from "@/pages/audience/ConcertsPage";
 import ConcertDetailPage from "@/pages/audience/ConcertDetailPage";
+import TicketsPage from "@/pages/audience/TicketsPage";
 
 // Organizer Pages
 import OrganizerDashboardPage from "@/pages/organizer/OrganizerDashboardPage";
 import CreateEditConcertPage from "@/pages/organizer/CreateEditConcertPage";
+import CheckinPage from "@/pages/organizer/CheckinPage";
 
 import { Toaster } from "sonner";
 
@@ -56,6 +58,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/tickets"
+            element={
+              <ProtectedRoute>
+                <TicketsPage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* ORGANIZER ROUTES */}
           <Route
@@ -79,6 +89,14 @@ function App() {
             element={
               <RoleGuard allowedRoles={["ORGANIZER"]}>
                 <CreateEditConcertPage />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/organizer/concerts/:id/checkin"
+            element={
+              <RoleGuard allowedRoles={["ORGANIZER"]}>
+                <CheckinPage />
               </RoleGuard>
             }
           />

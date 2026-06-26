@@ -52,5 +52,14 @@ export const authService = {
       { skipAuth: true }
     ),
 
-  getProfile: () => api.get<ProfileResponse>("/users/profile"),
+  getProfile: async () => {
+    const res = await api.get<ProfileResponse>("/users/profile");
+    if (res.success && res.data) {
+      const rawData = res.data as any;
+      if (rawData.fullName !== undefined) {
+        rawData.full_name = rawData.fullName;
+      }
+    }
+    return res;
+  },
 };

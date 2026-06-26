@@ -25,6 +25,7 @@ export default function Navbar() {
       ]
     : [
         { to: "/concerts", label: "Events", icon: Music },
+        { to: "/tickets", label: "My Tickets", icon: Ticket },
       ];
 
   const isActive = (path: string) => {

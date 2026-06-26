@@ -56,7 +56,7 @@ async function apiFetch<T>(
 
   if (!response.ok) {
     throw new ApiError(
-      data.message || "Something went wrong",
+      data.message || data.error || "Something went wrong",
       response.status,
       data
     );
