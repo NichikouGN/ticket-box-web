@@ -66,13 +66,25 @@ export const orderService = {
     return data as CreateOrderResponse;
   },
 
-  /**
-   * Poll the order SSE stream using fetch (which supports custom headers unlike EventSource).
-   * Reads the server-sent events line by line from the response body stream.
-   * Returns a cleanup/abort function.
-   */
-  streamOrderStatus: (
+  streamPaymentUrl: (
     orderId: string,
+    onUpdate: (update: OrderStatusUpdate) => void,
+    onError: (msg: string) => void
+  ): (() => void) => {
+    return orderService._streamBase(orderId, "payment-url", onUpdate, onError);
+  },
+
+  streamOrderConfirm: (
+    orderId: string,
+    onUpdate: (update: OrderStatusUpdate) => void,
+    onError: (msg: string) => void
+  ): (() => void) => {
+    return orderService._streamBase(orderId, "order-confirm", onUpdate, onError);
+  },
+
+  _streamBase: (
+    orderId: string,
+    endpoint: string,
     onUpdate: (update: OrderStatusUpdate) => void,
     onError: (msg: string) => void
   ): (() => void) => {
@@ -82,7 +94,7 @@ export const orderService = {
 
     (async () => {
       try {
-        const response = await fetch(`${base}/orders/${orderId}/stream`, {
+        const response = await fetch(`${base}/orders/${orderId}/stream/${endpoint}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             Accept: "text/event-stream",
@@ -137,11 +149,11 @@ export const orderService = {
         }
       } catch (err: any) {
         if (err?.name !== "AbortError") {
-          onError(err?.message || "Connection error while waiting for payment URL.");
+          onError(err?.message || "Connection error while waiting for update.");
         }
       }
     })();
 
     return () => controller.abort();
-  },
+  }
 };

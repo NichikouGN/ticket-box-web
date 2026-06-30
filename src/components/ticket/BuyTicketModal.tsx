@@ -27,7 +27,7 @@ interface BuyTicketModalProps {
   availableStock: number;
 }
 
-type ModalStep = "select" | "processing" | "redirect" | "error";
+type ModalStep = "select" | "processing" | "redirect" | "waiting_payment" | "success" | "error";
 
 
 
@@ -45,6 +45,7 @@ export default function BuyTicketModal({
   const [step, setStep] = useState<ModalStep>("select");
   const [processingMsg, setProcessingMsg] = useState("Creating your reservation…");
   const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
 
@@ -55,6 +56,7 @@ export default function BuyTicketModal({
     setStep("select");
     setQuantity(1);
     setPaymentUrl(null);
+    setOrderId(null);
     setErrorMsg(null);
     onClose();
   }, [onClose]);
@@ -77,7 +79,8 @@ export default function BuyTicketModal({
         throw new Error("Failed to create order");
       }
 
-      const { orderId } = orderRes.data;
+      const { orderId: newOrderId } = orderRes.data;
+      setOrderId(newOrderId);
       setProcessingMsg("Generating secure payment link…");
 
       // If the order already has a paymentUrl right away, skip SSE
@@ -88,8 +91,8 @@ export default function BuyTicketModal({
       }
 
       // Otherwise, open SSE stream to wait for paymentUrl
-      const cleanup = orderService.streamOrderStatus(
-        orderId,
+      const cleanup = orderService.streamPaymentUrl(
+        newOrderId,
         (update) => {
           if (update.paymentUrl) {
             setPaymentUrl(update.paymentUrl);
@@ -310,7 +313,31 @@ export default function BuyTicketModal({
                       className="w-full"
                       variant="gradient"
                       size="lg"
-                      onClick={() => window.open(paymentUrl, "_blank")}
+                      onClick={() => {
+                        window.open(paymentUrl, "_blank");
+                        if (orderId) {
+                          setStep("waiting_payment");
+                          const cleanup = orderService.streamOrderConfirm(
+                            orderId,
+                            (update) => {
+                              if (update.status === "COMPLETED") {
+                                setStep("success");
+                                setTimeout(() => {
+                                  window.location.href = "/tickets";
+                                }, 2000);
+                              } else if (update.status === "FAILED" || update.status === "EXPIRED") {
+                                setErrorMsg("Payment failed or expired.");
+                                setStep("error");
+                              }
+                            },
+                            (errMsg) => {
+                              setErrorMsg(errMsg);
+                              setStep("error");
+                            }
+                          );
+                          cleanupRef.current = cleanup;
+                        }
+                      }}
                     >
                       <ExternalLink className="w-5 h-5 mr-2" />
                       Complete Payment
@@ -321,6 +348,62 @@ export default function BuyTicketModal({
                     >
                       I'll pay later
                     </button>
+                  </motion.div>
+                )}
+
+                {/* ── Step: Waiting Payment ── */}
+                {step === "waiting_payment" && (
+                  <motion.div
+                    key="waiting_payment"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="p-8 flex flex-col items-center justify-center min-h-[320px] text-center"
+                  >
+                    <div className="relative mb-6">
+                      <div className="w-20 h-20 rounded-full border-2 border-slate-700 flex items-center justify-center">
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
+                        >
+                          <Loader2 className="w-10 h-10 text-violet-400" />
+                        </motion.div>
+                      </div>
+                      <div className="absolute inset-0 rounded-full bg-violet-500/10 blur-xl" />
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-2">Waiting for Payment</h3>
+                    <p className="text-slate-400 text-sm max-w-xs">Please complete your payment in the new tab. We are waiting for confirmation...</p>
+                    <button
+                      onClick={handleClose}
+                      className="mt-6 text-sm text-slate-500 hover:text-slate-300 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </motion.div>
+                )}
+
+                {/* ── Step: Success ── */}
+                {step === "success" && (
+                  <motion.div
+                    key="success"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="p-8 flex flex-col items-center text-center"
+                  >
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
+                      className="w-20 h-20 rounded-full bg-emerald-500/15 border-2 border-emerald-500/30 flex items-center justify-center mb-6"
+                    >
+                      <ShieldCheck className="w-10 h-10 text-emerald-400" />
+                    </motion.div>
+                    <h3 className="text-xl font-bold text-white mb-2">Payment Successful!</h3>
+                    <p className="text-slate-400 text-sm mb-6">
+                      Your payment was confirmed. Redirecting to your tickets...
+                    </p>
+                    <Loader2 className="w-6 h-6 text-violet-400 animate-spin" />
                   </motion.div>
                 )}
 

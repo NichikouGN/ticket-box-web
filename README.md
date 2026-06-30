@@ -21,8 +21,16 @@ npm run dev
 ```
 ## Versioning
 
+### [v1.4.0] - 2026-06-30
+- create `PaymentSuccessPage` and `PaymentCancelledPage`.
+- Split `streamOrderStatus` to `streamPaymentURL` and `streamOrderComfirm`.
+
+### [v1.3.0] - 2026-06-28
+- Create Spinner loading while waiting user to pay in Stripe.
+- Split SSE streamOrderStatus to streamPaymentURL and streamOrderComfirm.
+
 ### [v1.2.0] - 2026-06-27
-- `[AUDIENCE]` Create UI for CheckinPage.
+- `[AUDIENCE]` Create UI for CheckinPage (show ticket info and QR code).
 - `[ORGANIZER]` Create UI for Edit concert.
 - Improve UI for Order and Payment.
 - Refactor some code.

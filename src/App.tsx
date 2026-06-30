@@ -20,6 +20,10 @@ import OrganizerDashboardPage from "@/pages/organizer/OrganizerDashboardPage";
 import CreateEditConcertPage from "@/pages/organizer/CreateEditConcertPage";
 import CheckinPage from "@/pages/organizer/CheckinPage";
 
+// Payment Result Pages
+import PaymentSuccessPage from "@/pages/PaymentSuccessPage";
+import PaymentCancelledPage from "@/pages/PaymentCancelledPage";
+
 import { Toaster } from "sonner";
 
 function App() {
@@ -100,6 +104,10 @@ function App() {
               </RoleGuard>
             }
           />
+
+          {/* Payment Result Pages (public — user arrives from Stripe redirect) */}
+          <Route path="/payment-success" element={<PaymentSuccessPage />} />
+          <Route path="/payment-cancelled" element={<PaymentCancelledPage />} />
 
           {/* Catch all → redirect to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
