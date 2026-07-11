@@ -151,13 +151,41 @@ export default function ConcertDetailPage() {
                 <Users className="w-6 h-6 text-violet-400" />
                 Lineup
               </h2>
-              <div className="flex flex-wrap gap-3">
-                {concert.artists.map((artist, idx) => (
-                  <div key={idx} className="px-5 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white font-medium text-lg">
-                    {artist}
-                  </div>
-                ))}
-              </div>
+              {concert.artists.some(artist => artist.verifiedBio) ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {concert.artists.map((artist, idx) => (
+                    <Card key={idx} className="border-slate-800 bg-slate-900/50 backdrop-blur-xl hover:border-slate-700/80 transition-colors">
+                      <CardContent className="p-6">
+                        <div className="flex items-center gap-2 mb-3">
+                          <h3 className="text-xl font-bold text-white">{artist.name}</h3>
+                          {artist.verifiedBio && (
+                            <span className="text-[10px] uppercase font-bold tracking-wider bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                              Verified Bio
+                            </span>
+                          )}
+                        </div>
+                        {artist.verifiedBio ? (
+                          <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">
+                            {artist.verifiedBio}
+                          </p>
+                        ) : (
+                          <p className="text-slate-500 text-xs italic">
+                            No biography available.
+                          </p>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-3">
+                  {concert.artists.map((artist, idx) => (
+                    <div key={idx} className="px-5 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white font-medium text-lg">
+                      {artist.name}
+                    </div>
+                  ))}
+                </div>
+              )}
             </motion.section>
 
             {concert.description && (

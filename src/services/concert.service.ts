@@ -14,11 +14,17 @@ export interface ConcertListItem {
   thumbnailUrl: string | null;
 }
 
+export interface ConcertDetailArtist {
+  id: string;
+  name: string;
+  verifiedBio?: string | null;
+}
+
 export interface ConcertDetail {
   id: string;
   title: string;
   description: string | null;
-  artists: string[];
+  artists: ConcertDetailArtist[];
   venue: string;
   eventDate: string;
   thumbnailUrl: string | null;

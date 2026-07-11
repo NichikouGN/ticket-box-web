@@ -90,8 +90,8 @@ export default function BuyTicketModal({
         return;
       }
 
-      // Otherwise, open SSE stream to wait for paymentUrl
-      const cleanup = orderService.streamPaymentUrl(
+      // Otherwise, open SSE stream + polling fallback to wait for paymentUrl
+      const cleanup = orderService.streamPaymentUrlWithPolling(
         newOrderId,
         (update) => {
           if (update.paymentUrl) {
@@ -317,7 +317,7 @@ export default function BuyTicketModal({
                         window.open(paymentUrl, "_blank");
                         if (orderId) {
                           setStep("waiting_payment");
-                          const cleanup = orderService.streamOrderConfirm(
+                          const cleanup = orderService.streamOrderConfirmWithPolling(
                             orderId,
                             (update) => {
                               if (update.status === "COMPLETED") {

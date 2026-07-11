@@ -1,12 +1,19 @@
 import { api } from "./api";
 
 export interface TicketListItem {
-  id: string;
-  concert_id: string;
-  ticket_type_id: string;
+  ticketId: string;
+  concertId: string;
+  ticketTypeId: string;
   status: "UNUSED" | "USED";
-  created_at: string;
-  used_at: string | null;
+  createdAt: string;
+  usedAt: string | null;
+  ticketName?: string | null;
+  concertDetails?: {
+    id: string;
+    title: string;
+    venue: string;
+    eventDate: string;
+  } | null;
 }
 
 export interface TicketDetail {
@@ -66,7 +73,4 @@ export const ticketService = {
   verifyTicket: (data: VerifyTicketInput) => api.post<VerifyTicketResponse>("/checkin/verify", data),
 
   getCheckinStats: (concertId: string) => api.get<CheckinStatsResponse>(`/checkin/stats/${concertId}`),
-
-  confirmPaymentSession: (sessionId: string) =>
-    api.post<{ success: boolean; message: string }>("/payments/confirm", { sessionId }),
 };

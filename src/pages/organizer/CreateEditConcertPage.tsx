@@ -72,11 +72,12 @@ export default function CreateEditConcertPage() {
             setEventDate(d.toISOString().slice(0, 16));
             setThumbnailUrl(data.thumbnailUrl || "");
             setSeatMapSvgUrl(data.seatMapSvgUrl || "");
-            setArtists(data.artists.length ? data.artists : [""]);
+            const artistNames = (data.artists || []).map((a: any) => typeof a === "string" ? a : a.name);
+            setArtists(artistNames.length ? artistNames : [""]);
 
             // Resolve artist IDs from names
-            if (data.artists.length) {
-              const validNames = data.artists.filter((name: string) => name.trim() !== "");
+            if (artistNames.length) {
+              const validNames = artistNames.filter((name: string) => name.trim() !== "");
               if (validNames.length > 0) {
                 concertService.createArtists(validNames)
                   .then(res => {

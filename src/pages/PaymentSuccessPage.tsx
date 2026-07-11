@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button";
 export default function PaymentSuccessPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const sessionId = searchParams.get("session_id");
+  const orderId = searchParams.get("orderId") || searchParams.get("session_id");
   const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
-    if (!sessionId) return;
+    if (!orderId) return;
 
     const timer = setInterval(() => {
       setCountdown((prev) => {
@@ -25,9 +25,9 @@ export default function PaymentSuccessPage() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [sessionId, navigate]);
+  }, [orderId, navigate]);
 
-  if (!sessionId) {
+  if (!orderId) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="text-center">

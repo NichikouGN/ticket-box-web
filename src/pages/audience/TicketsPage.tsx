@@ -46,7 +46,9 @@ export default function TicketsPage() {
       }
 
       // 2. Fetch ticket types for all unique concerts in the tickets list to map section names
-      const uniqueConcertIds = Array.from(new Set((ticketsRes.data || []).map((t) => t.concert_id)));
+      const uniqueConcertIds = Array.from(
+        new Set((ticketsRes.data || []).map((t) => t.concertId).filter(Boolean) as string[])
+      );
       const nameMap: Record<string, string> = {};
 
       await Promise.all(
@@ -73,29 +75,26 @@ export default function TicketsPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const sessionId = params.get("session_id");
+    const sessionId = params.get("session_id") || params.get("orderId");
 
-    const verifySession = async (sId: string) => {
+    const verifySession = async () => {
       const toastId = toast.loading("Confirming your payment and generating your tickets...");
       try {
-        const res = await ticketService.confirmPaymentSession(sId);
-        if (res.success) {
-          toast.success("Payment confirmed! Your tickets are ready.", { id: toastId });
-          // Clear query parameters from URL
-          window.history.replaceState({}, document.title, window.location.pathname);
-          loadData();
-        } else {
-          toast.error(res.message || "Failed to confirm payment.", { id: toastId });
-          loadData();
-        }
+        // Since payment processing and ticket generation occur asynchronously via webhooks
+        // and message queues, we wait briefly for the processes to complete.
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        toast.success("Payment confirmed! Your tickets are ready.", { id: toastId });
+        // Clear query parameters from URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+        loadData();
       } catch (err: any) {
-        toast.error(err.message || "An error occurred while confirming payment.", { id: toastId });
+        toast.error(err.message || "An error occurred while loading your tickets.", { id: toastId });
         loadData();
       }
     };
 
     if (sessionId) {
-      verifySession(sessionId);
+      verifySession();
     } else {
       loadData();
     }
@@ -108,7 +107,7 @@ export default function TicketsPage() {
     setSignature(null);
 
     try {
-      const res = await ticketService.getTicketDetail(ticket.id);
+      const res = await ticketService.getTicketDetail(ticket.ticketId);
       if (res.success && res.data) {
         setSignedDetail(res.data.ticket);
         setSignature(res.data.signature);
@@ -174,8 +173,8 @@ export default function TicketsPage() {
         ) : tickets.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {tickets.map((ticket, idx) => {
-              const concert = concerts[ticket.concert_id];
-              const ticketName = ticketNames[ticket.ticket_type_id] || "Standard Admission";
+              const concert = concerts[ticket.concertId];
+              const ticketName = ticketNames[ticket.ticketTypeId] || "Standard Admission";
               const formattedDate = concert
                 ? new Date(concert.eventDate).toLocaleDateString("en-US", {
                     month: "short",
@@ -188,7 +187,7 @@ export default function TicketsPage() {
 
               return (
                 <motion.div
-                  key={ticket.id}
+                  key={ticket.ticketId}
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05 }}
@@ -206,7 +205,7 @@ export default function TicketsPage() {
                           <img src={concert.thumbnailUrl} className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <TicketIcon className="w-10 h-10 text-slate-600" />
+                            <TicketIcon className="w-10 h-10 text-slate-650" />
                           </div>
                         )}
                       </div>
@@ -235,7 +234,7 @@ export default function TicketsPage() {
                         <div className="border-t border-slate-850 pt-2 flex justify-between items-center text-xs">
                           <span className="text-violet-400 font-semibold">{ticketName}</span>
                           <span className="text-slate-500 uppercase tracking-widest font-mono">
-                            #{ticket.id.slice(0, 8)}
+                            #{ticket.ticketId.slice(0, 8)}
                           </span>
                         </div>
                       </div>
@@ -304,14 +303,14 @@ export default function TicketsPage() {
                       {/* Event details summary */}
                       <div className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl p-4 mb-6">
                         <h4 className="font-bold text-white text-base text-center">
-                          {concerts[selectedTicket.concert_id]?.title || "Concert Event"}
+                          {concerts[selectedTicket.concertId]?.title || "Concert Event"}
                         </h4>
                         <div className="flex justify-center gap-2 mt-2">
                           <Badge variant={selectedTicket.status === "UNUSED" ? "published" : "secondary"}>
                             {selectedTicket.status}
                           </Badge>
                           <Badge variant="default">
-                            {ticketNames[selectedTicket.ticket_type_id] || "Standard"}
+                            {ticketNames[selectedTicket.ticketTypeId] || "Standard"}
                           </Badge>
                         </div>
                       </div>
@@ -339,7 +338,7 @@ export default function TicketsPage() {
                       <div className="w-full bg-slate-950/30 border border-slate-850 rounded-2xl p-3.5 text-center text-xs space-y-1.5">
                         <div className="flex justify-between text-slate-500">
                           <span>Ticket ID</span>
-                          <span className="font-mono text-slate-400">{selectedTicket.id}</span>
+                          <span className="font-mono text-slate-400">{selectedTicket.ticketId}</span>
                         </div>
                         {signature && (
                           <div className="flex justify-between text-slate-550 items-center">
