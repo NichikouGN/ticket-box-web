@@ -135,6 +135,25 @@ export interface AwaitingReviewBiosResponse {
   data: ArtistBioReviewItem[];
 }
 
+export interface VipGuest {
+  id: string;
+  fullName: string;
+  email: string;
+  sponsor: string;
+  concertId: string;
+  checkedInAt: string | null;
+}
+
+export interface ListVipGuestsResponse {
+  success: boolean;
+  data: VipGuest[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+  };
+}
+
 function getApiBase(): string {
   return (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:3000/api/v1";
 }
@@ -238,6 +257,11 @@ export const concertService = {
       ...rest,
       coverImage: thumbnailUrl || null,
       seatMapSvg: seatMapSvgUrl || null,
+      ticketTypes: (data.ticketTypes || []).map((t) => ({
+        ...t,
+        saleStart: t.saleStart || new Date().toISOString(),
+        saleEnd: t.saleEnd || new Date(data.eventDate).toISOString(),
+      })),
     };
     return api.post<CreateConcertResponse>("/organizer/concerts", body);
   },
@@ -248,6 +272,13 @@ export const concertService = {
       ...rest,
       coverImage: thumbnailUrl !== undefined ? (thumbnailUrl || null) : undefined,
       seatMapSvg: seatMapSvgUrl !== undefined ? (seatMapSvgUrl || null) : undefined,
+      ticketTypes: data.ticketTypes
+        ? data.ticketTypes.map((t) => ({
+            ...t,
+            saleStart: t.saleStart || new Date().toISOString(),
+            saleEnd: t.saleEnd || (data.eventDate ? new Date(data.eventDate).toISOString() : new Date().toISOString()),
+          }))
+        : undefined,
     };
     return api.patch<MutationResponse>(`/organizer/concerts/${id}`, body);
   },
@@ -299,4 +330,35 @@ export const concertService = {
     }
     return data as MutationResponse;
   },
+
+  // ── Organizer VIP Guest Management ──────────────────────────────
+
+  getVipGuests: (concertId: string, page = 1, limit = 20) =>
+    api.get<ListVipGuestsResponse>(`/organizer/concerts/${concertId}/vip-guests?page=${page}&limit=${limit}`),
+
+  importVipGuests: async (concertId: string, csvFile: File) => {
+    const formData = new FormData();
+    formData.append("csv", csvFile);
+    const accessToken = localStorage.getItem("accessToken");
+    const response = await fetch(`${getApiBase()}/organizer/concerts/${concertId}/vip-guests/import`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: formData,
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to import VIP guests");
+    }
+    return data as MutationResponse;
+  },
+
+  // ── Staff VIP Check-in ──────────────────────────────────────────
+
+  getStaffVipGuests: (concertId: string, page = 1, limit = 20) =>
+    api.get<ListVipGuestsResponse>(`/staff/concerts/${concertId}/vip-guests?page=${page}&limit=${limit}`),
+
+  checkInVipGuest: (concertId: string, vipGuestId: string) =>
+    api.patch<MutationResponse>(`/staff/concerts/${concertId}/vip-guests/${vipGuestId}/check-in`, {}),
 };

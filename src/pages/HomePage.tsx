@@ -5,7 +5,7 @@ export default function HomePage() {
   const { user } = useAuth();
 
   // Role-based redirect
-  if (user?.role === "ORGANIZER") {
+  if (user?.role === "ORGANIZER" || user?.role === "STAFF") {
     return <Navigate to="/organizer" replace />;
   }
 

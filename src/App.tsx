@@ -75,7 +75,7 @@ function App() {
           <Route
             path="/organizer"
             element={
-              <RoleGuard allowedRoles={["ORGANIZER"]}>
+              <RoleGuard allowedRoles={["ORGANIZER", "STAFF"]}>
                 <OrganizerDashboardPage />
               </RoleGuard>
             }
@@ -99,7 +99,7 @@ function App() {
           <Route
             path="/organizer/concerts/:id/checkin"
             element={
-              <RoleGuard allowedRoles={["ORGANIZER"]}>
+              <RoleGuard allowedRoles={["ORGANIZER", "STAFF"]}>
                 <CheckinPage />
               </RoleGuard>
             }

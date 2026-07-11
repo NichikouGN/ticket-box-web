@@ -8,8 +8,10 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function OrganizerDashboardPage() {
+  const { user } = useAuth();
   const [concerts, setConcerts] = useState<ConcertListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -58,12 +60,14 @@ export default function OrganizerDashboardPage() {
             <h1 className="text-3xl font-bold text-white">Dashboard</h1>
             <p className="text-slate-400 mt-1">Manage your events and ticket sales</p>
           </div>
-          <Button asChild variant="gradient">
-            <Link to="/organizer/concerts/new">
-              <Plus className="w-4 h-4 mr-2" />
-              Create Event
-            </Link>
-          </Button>
+          {user?.role === "ORGANIZER" && (
+            <Button asChild variant="gradient">
+              <Link to="/organizer/concerts/new">
+                <Plus className="w-4 h-4 mr-2" />
+                Create Event
+              </Link>
+            </Button>
+          )}
         </div>
 
         <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl overflow-hidden">
@@ -118,33 +122,45 @@ export default function OrganizerDashboardPage() {
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
-                            <Button asChild variant="ghost" size="sm" className="h-8 text-slate-400 hover:text-white">
-                              <Link to={`/organizer/concerts/${concert.id}/edit`}>
-                                <Edit className="w-4 h-4" />
-                              </Link>
-                            </Button>
-                            
-                            {concert.status === 'DRAFT' && (
-                              <Button variant="ghost" size="sm" className="h-8 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10" onClick={() => handleAction('publish', concert.id)}>
-                                <Globe className="w-4 h-4 mr-1.5" /> Publish
-                              </Button>
-                            )}
-                            {concert.status === 'PUBLISHED' && (
-                              <>
+                            {user?.role === "STAFF" ? (
+                              concert.status === 'PUBLISHED' && (
                                 <Button asChild variant="ghost" size="sm" className="h-8 text-violet-400 hover:text-violet-300 hover:bg-violet-500/10">
                                   <Link to={`/organizer/concerts/${concert.id}/checkin`}>
                                     <ShieldCheck className="w-4 h-4 mr-1.5" /> Check-in
                                   </Link>
                                 </Button>
-                                <Button variant="ghost" size="sm" className="h-8 text-red-400 hover:text-red-300 hover:bg-red-500/10" onClick={() => handleAction('cancel', concert.id)}>
-                                  <Ban className="w-4 h-4 mr-1.5" /> Cancel
+                              )
+                            ) : (
+                              <>
+                                <Button asChild variant="ghost" size="sm" className="h-8 text-slate-400 hover:text-white">
+                                  <Link to={`/organizer/concerts/${concert.id}/edit`}>
+                                    <Edit className="w-4 h-4" />
+                                  </Link>
                                 </Button>
+                                
+                                {concert.status === 'DRAFT' && (
+                                  <Button variant="ghost" size="sm" className="h-8 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10" onClick={() => handleAction('publish', concert.id)}>
+                                    <Globe className="w-4 h-4 mr-1.5" /> Publish
+                                  </Button>
+                                )}
+                                {concert.status === 'PUBLISHED' && (
+                                  <>
+                                    <Button asChild variant="ghost" size="sm" className="h-8 text-violet-400 hover:text-violet-300 hover:bg-violet-500/10">
+                                      <Link to={`/organizer/concerts/${concert.id}/checkin`}>
+                                        <ShieldCheck className="w-4 h-4 mr-1.5" /> Check-in
+                                      </Link>
+                                    </Button>
+                                    <Button variant="ghost" size="sm" className="h-8 text-red-400 hover:text-red-300 hover:bg-red-500/10" onClick={() => handleAction('cancel', concert.id)}>
+                                      <Ban className="w-4 h-4 mr-1.5" /> Cancel
+                                    </Button>
+                                  </>
+                                )}
+                                {concert.status === 'CANCELLED' && (
+                                  <Button variant="ghost" size="sm" className="h-8 text-orange-400 hover:text-orange-300 hover:bg-orange-500/10" onClick={() => handleAction('restore', concert.id)}>
+                                    <ArchiveRestore className="w-4 h-4 mr-1.5" /> Restore
+                                  </Button>
+                                )}
                               </>
-                            )}
-                            {concert.status === 'CANCELLED' && (
-                              <Button variant="ghost" size="sm" className="h-8 text-orange-400 hover:text-orange-300 hover:bg-orange-500/10" onClick={() => handleAction('restore', concert.id)}>
-                                <ArchiveRestore className="w-4 h-4 mr-1.5" /> Restore
-                              </Button>
                             )}
                           </div>
                         </td>
