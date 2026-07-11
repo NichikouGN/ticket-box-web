@@ -20,8 +20,11 @@ npm install
 npm run dev
 ```
 ## Versioning
+### [v1.6.0] - 2026-07-11
+- Add VIP Guest roster view, CSV import feature for organizers, and VIP search check-in list for staff members.
+- Map fallback ISO-8601 strings for `saleStart` and `saleEnd` properties on `ticketTypes` in frontend API payloads to prevent concert creation validation failures.
+
 ### [v1.5.1] - 2026-07-11
-- Fix payment URL generation timeout by adding a polling fallback to the SSE payment URL stream. The frontend now runs SSE and interval-based polling in parallel, resolving whichever delivers the payment URL first.
 - Fix "waiting for payment" screen getting stuck by adding a polling fallback to the SSE order confirmation stream.
 - Align `CreateOrderResponse` type with backend `OrderResponse` (removed non-existent `status` field from `data`).
 - Add `paymentDeadline` to `OrderStatusUpdate` type for completeness.
