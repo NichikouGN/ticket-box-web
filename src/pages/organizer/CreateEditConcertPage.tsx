@@ -215,7 +215,24 @@ export default function CreateEditConcertPage() {
       await concertService.generateArtistBios(id, artistIds, pdfFile);
       toast.success("AI Bio generation requested! Bios will appear below for review once complete.");
       setPdfFile(null);
-      setTimeout(fetchAwaitingBios, 3000);
+
+      // Poll for awaiting bios every 3 seconds for up to 45 seconds (15 attempts)
+      let attempts = 0;
+      const interval = setInterval(async () => {
+        attempts++;
+        try {
+          const res = await concertService.getAwaitingReviewBios(id);
+          if (res.success && res.data && res.data.length > 0) {
+            setAwaitingBios(res.data);
+            clearInterval(interval);
+          }
+        } catch (err) {
+          console.error("Error polling awaiting bios:", err);
+        }
+        if (attempts >= 15) {
+          clearInterval(interval);
+        }
+      }, 3000);
     } catch (err: any) {
       toast.error(err.message || "Failed to generate biographies");
     } finally {

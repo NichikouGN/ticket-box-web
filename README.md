@@ -22,7 +22,11 @@ npm run dev
 ## Versioning
 ### [v1.6.0] - 2026-07-11
 - Add VIP Guest roster view, CSV import feature for organizers, and VIP search check-in list for staff members.
+- Separate gate console access by role (Staff has standard scanning & VIP check-in, Organizers only have VIP guest list & import capability).
+- Restrict dashboard actions by role (Staff can only access gate check-in console; all other management actions like event creation/edit/publishing are restricted to organizers).
 - Map fallback ISO-8601 strings for `saleStart` and `saleEnd` properties on `ticketTypes` in frontend API payloads to prevent concert creation validation failures.
+- Fix Badge component `ReferenceError` during VIP CSV upload and check-in status rendering.
+- Add status polling for AI Artist Bio generation on `CreateEditConcertPage.tsx` to automatically reload the review section once completed.
 
 ### [v1.5.1] - 2026-07-11
 - Fix "waiting for payment" screen getting stuck by adding a polling fallback to the SSE order confirmation stream.
