@@ -5,6 +5,7 @@ import { ticketService, type CheckinStats } from "@/services/ticket.service";
 import { concertService, type ConcertDetail, type VipGuest } from "@/services/concert.service";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -61,7 +62,7 @@ export default function CheckinPage() {
       if (detailRes.success) {
         setConcert(detailRes.data);
       }
-      
+
       if (statsRes && statsRes.success && statsRes.data) {
         setStats(statsRes.data);
       } else {
@@ -311,9 +312,8 @@ export default function CheckinPage() {
           <div className="flex gap-4 border-b border-slate-800 mb-8">
             <button
               onClick={() => setActiveTab("standard")}
-              className={`pb-4 px-2 font-semibold text-sm transition-colors relative ${
-                activeTab === "standard" ? "text-violet-400" : "text-slate-400 hover:text-white"
-              }`}
+              className={`pb-4 px-2 font-semibold text-sm transition-colors relative ${activeTab === "standard" ? "text-violet-400" : "text-slate-400 hover:text-white"
+                }`}
             >
               Standard Tickets Check-in
               {activeTab === "standard" && (
@@ -322,9 +322,8 @@ export default function CheckinPage() {
             </button>
             <button
               onClick={() => setActiveTab("vip")}
-              className={`pb-4 px-2 font-semibold text-sm transition-colors relative ${
-                activeTab === "vip" ? "text-violet-400" : "text-slate-400 hover:text-white"
-              }`}
+              className={`pb-4 px-2 font-semibold text-sm transition-colors relative ${activeTab === "vip" ? "text-violet-400" : "text-slate-400 hover:text-white"
+                }`}
             >
               VIP Guests Check-in
               {activeTab === "vip" && (
@@ -504,12 +503,12 @@ export default function CheckinPage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-800/30">
-                        {vipGuests.filter(g => 
+                        {vipGuests.filter(g =>
                           (g.fullName || "").toLowerCase().includes(vipSearchQuery.toLowerCase()) ||
                           (g.email || "").toLowerCase().includes(vipSearchQuery.toLowerCase()) ||
                           (g.sponsor || "").toLowerCase().includes(vipSearchQuery.toLowerCase())
                         ).length > 0 ? (
-                          vipGuests.filter(g => 
+                          vipGuests.filter(g =>
                             (g.fullName || "").toLowerCase().includes(vipSearchQuery.toLowerCase()) ||
                             (g.email || "").toLowerCase().includes(vipSearchQuery.toLowerCase()) ||
                             (g.sponsor || "").toLowerCase().includes(vipSearchQuery.toLowerCase())
