@@ -20,6 +20,14 @@ npm install
 npm run dev
 ```
 ## Versioning
+
+### [v1.6.1] - 2026-07-12
+- Restyling UI for better experience.
+- Create dark mode feature.
+
+### [v1.6.1] - 2026-07-12
+- Change QR code payload structure to work with frontend.
+
 ### [v1.6.0] - 2026-07-11
 - Add VIP Guest roster view, CSV import feature for organizers, and VIP search check-in list for staff members.
 - Separate gate console access by role (Staff has standard scanning & VIP check-in, Organizers only have VIP guest list & import capability).

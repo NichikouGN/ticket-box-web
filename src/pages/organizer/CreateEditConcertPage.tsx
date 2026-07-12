@@ -243,7 +243,7 @@ export default function CreateEditConcertPage() {
   if (isLoading) {
     return (
       <AppLayout>
-        <div className="flex items-center justify-center min-h-[50vh]"><Loader2 className="w-8 h-8 animate-spin text-violet-500" /></div>
+        <div className="flex items-center justify-center min-h-[50vh]"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
       </AppLayout>
     );
   }
@@ -251,64 +251,64 @@ export default function CreateEditConcertPage() {
   return (
     <AppLayout>
       <div className="max-w-4xl mx-auto px-4 py-8 pb-24">
-        <Link to="/organizer" className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white mb-6">
+        <Link to="/organizer" className="inline-flex items-center gap-2 text-sm text-muted hover:text-foreground mb-6 transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to Dashboard
         </Link>
 
-        <h1 className="text-3xl font-bold text-white mb-8">
+        <h1 className="text-3xl font-bold text-foreground mb-8 transition-colors duration-300">
           {isEditMode ? "Edit Event" : "Create New Event"}
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Basic Info */}
-          <Card>
+          <Card className="border-border bg-card shadow-sm transition-colors duration-300">
             <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
-              <CardDescription>Main details about the event.</CardDescription>
+              <CardTitle className="text-foreground transition-colors duration-300">Basic Information</CardTitle>
+              <CardDescription className="text-muted">Main details about the event.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="title">Event Title <span className="text-red-400">*</span></Label>
-                <Input id="title" required value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. The Eras Tour" />
+                <Label htmlFor="title">Event Title <span className="text-red-500">*</span></Label>
+                <Input id="title" required value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. The Eras Tour" className="border-border bg-input" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="description">Description</Label>
-                <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} placeholder="Tell people about the event..." />
+                <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} placeholder="Tell people about the event..." className="border-border bg-input" />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="venue">Venue <span className="text-red-400">*</span></Label>
-                  <Input id="venue" required value={venue} onChange={e => setVenue(e.target.value)} placeholder="e.g. Madison Square Garden" />
+                  <Label htmlFor="venue">Venue <span className="text-red-500">*</span></Label>
+                  <Input id="venue" required value={venue} onChange={e => setVenue(e.target.value)} placeholder="e.g. Madison Square Garden" className="border-border bg-input" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="date">Date & Time <span className="text-red-400">*</span></Label>
-                  <Input id="date" required type="datetime-local" value={eventDate} onChange={e => setEventDate(e.target.value)} />
+                  <Label htmlFor="date">Date & Time <span className="text-red-500">*</span></Label>
+                  <Input id="date" required type="datetime-local" value={eventDate} onChange={e => setEventDate(e.target.value)} className="border-border bg-input" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Media */}
-          <Card>
+          <Card className="border-border bg-card shadow-sm transition-colors duration-300">
             <CardHeader>
-              <CardTitle>Media (Optional)</CardTitle>
+              <CardTitle className="text-foreground transition-colors duration-300">Media (Optional)</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="thumb">Poster/Thumbnail Image URL</Label>
-                <Input id="thumb" type="url" value={thumbnailUrl} onChange={e => setThumbnailUrl(e.target.value)} placeholder="https://..." />
+                <Input id="thumb" type="url" value={thumbnailUrl} onChange={e => setThumbnailUrl(e.target.value)} placeholder="https://..." className="border-border bg-input" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="seatmap">Seat Map SVG URL</Label>
-                <Input id="seatmap" type="url" value={seatMapSvgUrl} onChange={e => setSeatMapSvgUrl(e.target.value)} placeholder="https://..." />
+                <Input id="seatmap" type="url" value={seatMapSvgUrl} onChange={e => setSeatMapSvgUrl(e.target.value)} placeholder="https://..." className="border-border bg-input" />
               </div>
             </CardContent>
           </Card>
 
           {/* Artists */}
-          <Card>
+          <Card className="border-border bg-card shadow-sm transition-colors duration-300">
             <CardHeader>
-              <CardTitle>Lineup / Artists <span className="text-red-400">*</span></CardTitle>
+              <CardTitle className="text-foreground transition-colors duration-300">Lineup / Artists <span className="text-red-500">*</span></CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {artists.map((artist, idx) => (
@@ -318,13 +318,14 @@ export default function CreateEditConcertPage() {
                     onChange={e => handleArtistChange(idx, e.target.value)}
                     placeholder="Artist name"
                     required={idx === 0}
+                    className="border-border bg-input"
                   />
-                  <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveArtist(idx)} disabled={artists.length === 1} className="text-red-400 hover:text-red-300">
+                  <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveArtist(idx)} disabled={artists.length === 1} className="text-red-500 hover:text-red-400 rounded-xl">
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
               ))}
-              <Button type="button" variant="secondary" size="sm" onClick={handleAddArtist} className="mt-2">
+              <Button type="button" variant="secondary" size="sm" onClick={handleAddArtist} className="mt-2 rounded-xl border border-border">
                 <Plus className="w-4 h-4 mr-2" /> Add Artist
               </Button>
             </CardContent>
@@ -332,24 +333,24 @@ export default function CreateEditConcertPage() {
 
           {/* AI Press Kit & Biography (Only visible in Edit Mode) */}
           {isEditMode && (
-            <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl">
+            <Card className="border-border bg-card shadow-sm transition-colors duration-300">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-violet-400" />
+                <CardTitle className="flex items-center gap-2 text-foreground transition-colors duration-300">
+                  <FileText className="w-5 h-5 text-primary" />
                   AI Roster Biographies
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-muted">
                   Upload an artist press kit (PDF) to generate biographies using Gemini AI. Make sure your artist names are saved first.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* PDF Upload */}
-                <div className="p-6 rounded-xl border border-dashed border-slate-700 bg-slate-800/20 flex flex-col items-center justify-center text-center">
-                  <Upload className="w-8 h-8 text-slate-500 mb-2" />
-                  <Label htmlFor="pdf-upload" className="cursor-pointer text-sm font-semibold text-violet-400 hover:text-violet-300 mb-1">
+                <div className="p-6 rounded-xl border border-dashed border-border bg-surface flex flex-col items-center justify-center text-center transition-colors duration-300">
+                  <Upload className="w-8 h-8 text-muted mb-2" />
+                  <Label htmlFor="pdf-upload" className="cursor-pointer text-sm font-semibold text-primary hover:underline mb-1">
                     {pdfFile ? pdfFile.name : "Select PDF Press Kit"}
                   </Label>
-                  <p className="text-xs text-slate-550">Max size 10MB. Must be a PDF file.</p>
+                  <p className="text-xs text-muted">Max size 10MB. Must be a PDF file.</p>
                   <input
                     id="pdf-upload"
                     type="file"
@@ -365,15 +366,15 @@ export default function CreateEditConcertPage() {
                   {pdfFile && (
                     <Button
                       type="button"
-                      variant="gradient"
+                      variant="default"
                       size="sm"
-                      className="mt-4"
+                      className="mt-4 font-semibold"
                       onClick={handleGenerateBios}
                       disabled={isGeneratingBio}
                     >
                       {isGeneratingBio ? (
                         <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          <Loader2 className="w-4 h-2 animate-spin text-primary-foreground mr-2" />
                           Generating Bios...
                         </>
                       ) : (
@@ -386,12 +387,12 @@ export default function CreateEditConcertPage() {
                 {/* Review Panel */}
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <h3 className="text-sm font-semibold text-slate-300">Awaiting Review ({awaitingBios.length})</h3>
+                    <h3 className="text-sm font-semibold text-foreground transition-colors duration-300">Awaiting Review ({awaitingBios.length})</h3>
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="h-8 text-xs text-slate-400 hover:text-white"
+                      className="h-8 text-xs text-muted hover:text-foreground rounded-xl"
                       onClick={fetchAwaitingBios}
                       disabled={isLoadingBios}
                     >
@@ -403,15 +404,15 @@ export default function CreateEditConcertPage() {
                   {awaitingBios.length > 0 ? (
                     <div className="space-y-4">
                       {awaitingBios.map((bio) => (
-                        <div key={bio.artistId} className="p-4 rounded-xl border border-slate-800 bg-slate-950/40 space-y-3">
+                        <div key={bio.artistId} className="p-4 rounded-xl border border-border bg-surface space-y-3 transition-colors duration-300">
                           <div className="flex justify-between items-start">
-                            <span className="font-semibold text-white text-base">{bio.artistName}</span>
+                            <span className="font-semibold text-foreground text-base transition-colors duration-300">{bio.artistName}</span>
                             <div className="flex gap-2">
                               <Button
                                 type="button"
                                 variant="ghost"
                                 size="sm"
-                                className="h-8 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
+                                className="h-8 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 rounded-xl"
                                 onClick={() => handleBioAction(bio.artistId, "APPROVED")}
                               >
                                 <Check className="w-4 h-4 mr-1" /> Approve
@@ -420,19 +421,19 @@ export default function CreateEditConcertPage() {
                                 type="button"
                                 variant="ghost"
                                 size="sm"
-                                className="h-8 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                                className="h-8 text-red-500 hover:bg-red-500/10 rounded-xl"
                                 onClick={() => handleBioAction(bio.artistId, "REJECTED")}
                               >
                                 <X className="w-4 h-4 mr-1" /> Reject
                               </Button>
                             </div>
                           </div>
-                          <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">{bio.aiBio}</p>
+                          <p className="text-muted text-sm leading-relaxed whitespace-pre-wrap">{bio.aiBio}</p>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-xs text-slate-500 py-4 text-center border border-slate-800 rounded-xl bg-slate-900/20">
+                    <p className="text-xs text-muted py-4 text-center border border-border rounded-xl bg-surface transition-colors duration-300">
                       No bios awaiting review. Roster biographies will show up here for validation once generated.
                     </p>
                   )}
@@ -442,16 +443,16 @@ export default function CreateEditConcertPage() {
           )}
 
           {/* Tickets */}
-          <Card>
+          <Card className="border-border bg-card shadow-sm transition-colors duration-300">
             <CardHeader>
-              <CardTitle>Ticket Types <span className="text-red-400">*</span></CardTitle>
-              <CardDescription>Define the sections and pricing for the event. Note: Editing replaces all ticket types.</CardDescription>
+              <CardTitle className="text-foreground transition-colors duration-300">Ticket Types <span className="text-red-500">*</span></CardTitle>
+              <CardDescription className="text-muted">Define the sections and pricing for the event. Note: Editing replaces all ticket types.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {ticketTypes.map((ticket, idx) => (
-                <div key={idx} className="p-4 rounded-xl border border-slate-800 bg-slate-800/30 space-y-4 relative">
+                <div key={idx} className="p-4 rounded-xl border border-border bg-surface space-y-4 relative transition-colors duration-300">
                   <div className="absolute top-4 right-4">
-                    <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveTicket(idx)} disabled={ticketTypes.length === 1} className="text-red-400 hover:text-red-300 h-8 w-8">
+                    <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveTicket(idx)} disabled={ticketTypes.length === 1} className="text-red-500 hover:text-red-400 h-8 w-8 rounded-xl">
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
@@ -459,32 +460,32 @@ export default function CreateEditConcertPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pr-10">
                     <div className="space-y-2">
                       <Label>Ticket Name</Label>
-                      <Input required value={ticket.name} onChange={e => handleTicketChange(idx, 'name', e.target.value)} placeholder="e.g. VIP Standing" />
+                      <Input required value={ticket.name} onChange={e => handleTicketChange(idx, 'name', e.target.value)} placeholder="e.g. VIP Standing" className="border-border bg-input" />
                     </div>
                     <div className="space-y-2">
                       <Label>Price ($)</Label>
-                      <Input required type="number" min="0" value={ticket.price} onChange={e => handleTicketChange(idx, 'price', Number(e.target.value))} />
+                      <Input required type="number" min="0" value={ticket.price} onChange={e => handleTicketChange(idx, 'price', Number(e.target.value))} className="border-border bg-input" />
                     </div>
                     <div className="space-y-2">
                       <Label>Total Capacity</Label>
-                      <Input required type="number" min="1" value={ticket.totalCapacity} onChange={e => handleTicketChange(idx, 'totalCapacity', Number(e.target.value))} />
+                      <Input required type="number" min="1" value={ticket.totalCapacity} onChange={e => handleTicketChange(idx, 'totalCapacity', Number(e.target.value))} className="border-border bg-input" />
                     </div>
                     <div className="space-y-2">
                       <Label>Max per user</Label>
-                      <Input required type="number" min="1" value={ticket.maxPerUser} onChange={e => handleTicketChange(idx, 'maxPerUser', Number(e.target.value))} />
+                      <Input required type="number" min="1" value={ticket.maxPerUser} onChange={e => handleTicketChange(idx, 'maxPerUser', Number(e.target.value))} className="border-border bg-input" />
                     </div>
                   </div>
                 </div>
               ))}
-              <Button type="button" variant="secondary" size="sm" onClick={handleAddTicket}>
+              <Button type="button" variant="secondary" size="sm" onClick={handleAddTicket} className="rounded-xl border border-border">
                 <Plus className="w-4 h-4 mr-2" /> Add Ticket Type
               </Button>
             </CardContent>
           </Card>
 
           <div className="flex justify-end gap-4">
-            <Button type="button" variant="ghost" onClick={() => navigate("/organizer")}>Cancel</Button>
-            <Button type="submit" variant="gradient" disabled={isSubmitting}>
+            <Button type="button" variant="ghost" onClick={() => navigate("/organizer")} className="rounded-xl">Cancel</Button>
+            <Button type="submit" variant="default" disabled={isSubmitting} className="font-semibold">
               {isSubmitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
               {isEditMode ? "Save Changes" : "Create Event"}
             </Button>

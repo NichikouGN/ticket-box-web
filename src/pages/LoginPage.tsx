@@ -46,35 +46,30 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950">
-      {/* Glow effects */}
-      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-violet-600 rounded-full blur-3xl opacity-20 animate-pulse" />
-      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-fuchsia-600 rounded-full blur-3xl opacity-15 animate-pulse" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-500 rounded-full blur-[128px] opacity-10" />
-
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background text-foreground transition-colors duration-300">
       <motion.div
         initial={{ opacity: 0, y: 24, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="w-full max-w-md mx-4 z-10"
       >
-        <Card className="border-slate-800 bg-slate-900/80 backdrop-blur-xl">
+        <Card className="border-border bg-card shadow-lg transition-colors duration-300">
           <CardHeader className="text-center space-y-4 pb-2">
             {/* Logo */}
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-violet-500/30"
+              className="mx-auto w-14 h-14 rounded-2xl bg-primary flex items-center justify-center shadow-md transition-colors duration-300"
             >
-              <Ticket className="w-7 h-7 text-white" />
+              <Ticket className="w-7 h-7 text-primary-foreground" />
             </motion.div>
 
             <div>
-              <CardTitle className="text-2xl font-bold text-white">
+              <CardTitle className="text-2xl font-bold text-foreground">
                 Welcome back
               </CardTitle>
-              <CardDescription className="text-slate-400 mt-1">
+              <CardDescription className="text-muted mt-1">
                 Sign in to your TicketBox account
               </CardDescription>
             </div>
@@ -87,7 +82,7 @@ export default function LoginPage() {
                 <motion.div
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center"
+                  className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm text-center"
                 >
                   {error}
                 </motion.div>
@@ -97,14 +92,14 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <Label htmlFor="login-email">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
                   <Input
                     id="login-email"
                     type="email"
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 border-border bg-input"
                     autoComplete="email"
                     aria-label="Email address"
                   />
@@ -115,21 +110,21 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <Label htmlFor="login-password">Password</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
                   <Input
                     id="login-password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10"
+                    className="pl-10 pr-10 border-border bg-input"
                     autoComplete="current-password"
                     aria-label="Password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted hover:text-foreground transition-colors"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? (
@@ -144,7 +139,7 @@ export default function LoginPage() {
               {/* Submit button */}
               <Button
                 type="submit"
-                variant="gradient"
+                variant="default"
                 size="lg"
                 className="w-full"
                 disabled={isSubmitting}
@@ -163,18 +158,18 @@ export default function LoginPage() {
 
             {/* Divider */}
             <div className="relative my-6">
-              <Separator />
-              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-900 px-3 text-xs text-slate-500">
+              <Separator className="bg-border" />
+              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted transition-colors duration-300">
                 or
               </span>
             </div>
 
             {/* Sign up link */}
-            <p className="text-center text-sm text-slate-400">
+            <p className="text-center text-sm text-muted">
               Don't have an account?{" "}
               <Link
                 to="/signup"
-                className="text-violet-400 hover:text-violet-300 font-medium transition-colors"
+                className="text-foreground hover:underline font-semibold transition-colors"
               >
                 Create one
               </Link>
@@ -183,7 +178,7 @@ export default function LoginPage() {
         </Card>
 
         {/* Branding */}
-        <p className="text-center text-xs text-slate-600 mt-6">
+        <p className="text-center text-xs text-muted/60 mt-6">
           © {new Date().getFullYear()} TicketBox. All rights reserved.
         </p>
       </motion.div>

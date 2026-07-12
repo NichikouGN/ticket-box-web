@@ -22,7 +22,7 @@ export default function EventCard({ concert, isOrganizerView = false }: EventCar
   const linkPath = isOrganizerView ? `/organizer/concerts/${concert.id}/edit` : `/concerts/${concert.id}`;
 
   return (
-    <Card className="group overflow-hidden border-slate-800 bg-slate-900/80 backdrop-blur-xl hover:border-violet-500/30 transition-all duration-300">
+    <Card className="group overflow-hidden border-border bg-card hover:border-primary/30 transition-all duration-300 shadow-md">
       {/* Poster */}
       <Link to={linkPath} className="block relative aspect-video overflow-hidden">
         {concert.thumbnailUrl ? (
@@ -32,8 +32,8 @@ export default function EventCard({ concert, isOrganizerView = false }: EventCar
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="w-full h-full bg-slate-800 flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
-            <Ticket className="w-12 h-12 text-slate-600" />
+          <div className="w-full h-full bg-surface flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
+            <Ticket className="w-12 h-12 text-muted/60" />
           </div>
         )}
         
@@ -47,29 +47,29 @@ export default function EventCard({ concert, isOrganizerView = false }: EventCar
         )}
 
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-80" />
       </Link>
 
       <CardContent className="p-5">
         <div className="space-y-3">
           <Link to={linkPath}>
-            <h3 className="text-xl font-bold text-white line-clamp-1 group-hover:text-violet-400 transition-colors">
+            <h3 className="text-xl font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors duration-200">
               {concert.title}
             </h3>
           </Link>
 
-          <p className="text-sm text-slate-400 line-clamp-1">
+          <p className="text-sm text-muted line-clamp-1">
             {concert.artists.join(", ")}
           </p>
 
           <div className="space-y-2 pt-2">
-            <div className="flex items-center gap-2 text-sm text-slate-300">
-              <Calendar className="w-4 h-4 text-violet-400 shrink-0" />
-              <span className="truncate">{formattedDate}</span>
+            <div className="flex items-center gap-2 text-sm text-muted">
+              <Calendar className="w-4 h-4 text-primary shrink-0" />
+              <span className="truncate text-foreground/80">{formattedDate}</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-slate-300">
-              <MapPin className="w-4 h-4 text-violet-400 shrink-0" />
-              <span className="truncate">{concert.venue}</span>
+            <div className="flex items-center gap-2 text-sm text-muted">
+              <MapPin className="w-4 h-4 text-primary shrink-0" />
+              <span className="truncate text-foreground/80">{concert.venue}</span>
             </div>
           </div>
         </div>

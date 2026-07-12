@@ -211,7 +211,7 @@ export default function CheckinPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center min-h-[50vh]">
-          <RefreshCw className="w-8 h-8 animate-spin text-violet-500" />
+          <RefreshCw className="w-8 h-8 animate-spin text-primary" />
         </div>
       </AppLayout>
     );
@@ -227,7 +227,7 @@ export default function CheckinPage() {
       <div className="max-w-5xl mx-auto px-4 md:px-6 py-12 pb-24">
         <Link
           to="/organizer"
-          className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white mb-6 transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-muted hover:text-foreground mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Dashboard
@@ -235,11 +235,11 @@ export default function CheckinPage() {
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white">Event Gate Check-in</h1>
-            <p className="text-slate-400 mt-1">{concert?.title || "Concert Event"}</p>
+            <h1 className="text-3xl font-bold text-foreground transition-colors duration-300">Event Gate Check-in</h1>
+            <p className="text-muted mt-1">{concert?.title || "Concert Event"}</p>
           </div>
           {user?.role === "STAFF" && (
-            <Button variant="outline" size="sm" onClick={fetchDetailsAndStats}>
+            <Button variant="outline" size="sm" onClick={fetchDetailsAndStats} className="border-border">
               <RefreshCw className="w-4 h-4 mr-2" />
               Refresh Stats
             </Button>
@@ -249,56 +249,56 @@ export default function CheckinPage() {
         {/* Stats Summary (STAFF only) */}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl">
+            <Card className="border-border bg-card shadow-sm transition-colors duration-300">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Total Tickets Sold</p>
-                    <h3 className="text-3xl font-bold text-white mt-2">{stats.totalTickets || 0}</h3>
+                    <p className="text-muted text-xs font-semibold uppercase tracking-wider">Total Tickets Sold</p>
+                    <h3 className="text-3xl font-bold text-foreground mt-2 transition-colors duration-300">{stats.totalTickets || 0}</h3>
                   </div>
-                  <div className="p-2.5 bg-slate-800 rounded-lg text-slate-400">
+                  <div className="p-2.5 bg-surface border border-border rounded-lg text-muted transition-colors duration-300">
                     <Ticket className="w-5 h-5" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl">
+            <Card className="border-border bg-card shadow-sm transition-colors duration-300">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Checked In</p>
-                    <h3 className="text-3xl font-bold text-emerald-400 mt-2">{stats.checkedInTickets || 0}</h3>
+                    <p className="text-muted text-xs font-semibold uppercase tracking-wider">Checked In</p>
+                    <h3 className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mt-2 transition-colors duration-300">{stats.checkedInTickets || 0}</h3>
                   </div>
-                  <div className="p-2.5 bg-emerald-500/10 rounded-lg text-emerald-400">
+                  <div className="p-2.5 bg-emerald-500/15 border-2 border-emerald-500/30 rounded-lg text-emerald-600 dark:text-emerald-400">
                     <CheckCircle className="w-5 h-5" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl">
+            <Card className="border-border bg-card shadow-sm transition-colors duration-300">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Remaining</p>
-                    <h3 className="text-3xl font-bold text-violet-400 mt-2">{stats.remainingTickets || 0}</h3>
+                    <p className="text-muted text-xs font-semibold uppercase tracking-wider">Remaining</p>
+                    <h3 className="text-3xl font-bold text-primary mt-2 transition-colors duration-300">{stats.remainingTickets || 0}</h3>
                   </div>
-                  <div className="p-2.5 bg-violet-500/10 rounded-lg text-violet-400">
+                  <div className="p-2.5 bg-primary/10 rounded-lg text-primary transition-colors duration-300">
                     <RefreshCw className="w-5 h-5" />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl">
+            <Card className="border-border bg-card shadow-sm transition-colors duration-300">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Attendance Rate</p>
-                    <h3 className="text-3xl font-bold text-fuchsia-400 mt-2">{attendancePercent}%</h3>
+                    <p className="text-muted text-xs font-semibold uppercase tracking-wider">Attendance Rate</p>
+                    <h3 className="text-3xl font-bold text-foreground mt-2 transition-colors duration-300">{attendancePercent}%</h3>
                   </div>
-                  <div className="p-2.5 bg-fuchsia-500/10 rounded-lg text-fuchsia-400">
+                  <div className="p-2.5 bg-surface border border-border rounded-lg text-muted transition-colors duration-300">
                     <BarChart2 className="w-5 h-5" />
                   </div>
                 </div>
@@ -309,25 +309,25 @@ export default function CheckinPage() {
 
         {/* Tab Selector (only for STAFF since organizers only handle VIP import/list) */}
         {user?.role === "STAFF" && (
-          <div className="flex gap-4 border-b border-slate-800 mb-8">
+          <div className="flex gap-4 border-b border-border mb-8 transition-colors duration-300">
             <button
               onClick={() => setActiveTab("standard")}
-              className={`pb-4 px-2 font-semibold text-sm transition-colors relative ${activeTab === "standard" ? "text-violet-400" : "text-slate-400 hover:text-white"
+              className={`pb-4 px-2 font-semibold text-sm transition-colors relative ${activeTab === "standard" ? "text-foreground font-bold" : "text-muted hover:text-foreground"
                 }`}
             >
               Standard Tickets Check-in
               {activeTab === "standard" && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-violet-400" />
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
               )}
             </button>
             <button
               onClick={() => setActiveTab("vip")}
-              className={`pb-4 px-2 font-semibold text-sm transition-colors relative ${activeTab === "vip" ? "text-violet-400" : "text-slate-400 hover:text-white"
+              className={`pb-4 px-2 font-semibold text-sm transition-colors relative ${activeTab === "vip" ? "text-foreground font-bold" : "text-muted hover:text-foreground"
                 }`}
             >
               VIP Guests Check-in
               {activeTab === "vip" && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-violet-400" />
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
               )}
             </button>
           </div>
@@ -337,13 +337,13 @@ export default function CheckinPage() {
         {activeTab === "standard" && user?.role === "STAFF" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
-              <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl">
+              <Card className="border-border bg-card shadow-sm transition-colors duration-300">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
-                    <ShieldCheck className="w-5 h-5 text-violet-400" />
+                  <CardTitle className="flex items-center gap-2 text-foreground transition-colors duration-300">
+                    <ShieldCheck className="w-5 h-5 text-primary" />
                     Verify Ticket
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-muted">
                     Scan the ticket QR code and paste the decoded JSON here, or enter the ID details manually.
                   </CardDescription>
                 </CardHeader>
@@ -364,15 +364,15 @@ export default function CheckinPage() {
                           }
                         }}
                         placeholder='{"ticketId":"...","userId":"...","concertId":"...","ticketTypeId":"...","signature":"..."}'
-                        className="font-mono text-sm h-32"
+                        className="font-mono text-sm h-32 border-border bg-input"
                       />
                     </div>
 
                     {/* Manual Section Separator */}
                     <div className="relative flex py-2 items-center">
-                      <div className="flex-grow border-t border-slate-800"></div>
-                      <span className="flex-shrink mx-4 text-slate-500 text-xs font-semibold uppercase">Or Enter Manually</span>
-                      <div className="flex-grow border-t border-slate-800"></div>
+                      <div className="flex-grow border-t border-border"></div>
+                      <span className="flex-shrink mx-4 text-muted text-xs font-semibold uppercase">Or Enter Manually</span>
+                      <div className="flex-grow border-t border-border"></div>
                     </div>
 
                     {/* Manual Inputs */}
@@ -388,6 +388,7 @@ export default function CheckinPage() {
                           }}
                           placeholder="UUID"
                           disabled={!!qrJson.trim()}
+                          className="border-border bg-input"
                         />
                       </div>
                       <div className="space-y-2">
@@ -401,6 +402,7 @@ export default function CheckinPage() {
                           }}
                           placeholder="UUID"
                           disabled={!!qrJson.trim()}
+                          className="border-border bg-input"
                         />
                       </div>
                       <div className="space-y-2">
@@ -414,11 +416,12 @@ export default function CheckinPage() {
                           }}
                           placeholder="UUID"
                           disabled={!!qrJson.trim()}
+                          className="border-border bg-input"
                         />
                       </div>
                     </div>
 
-                    <Button type="submit" variant="gradient" className="w-full" disabled={isVerifying}>
+                    <Button type="submit" variant="default" className="w-full font-semibold" disabled={isVerifying}>
                       {isVerifying ? (
                         <>
                           <SpinnerIcon className="w-4 h-4 mr-2 animate-spin" /> Verifying…
@@ -433,35 +436,35 @@ export default function CheckinPage() {
             </div>
 
             <div>
-              <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl h-full">
+              <Card className="border-border bg-card h-full shadow-sm transition-colors duration-300">
                 <CardHeader>
-                  <CardTitle className="text-white text-base">Verification Console</CardTitle>
-                  <CardDescription>Gate check-in responses display here.</CardDescription>
+                  <CardTitle className="text-foreground text-base transition-colors duration-300">Verification Console</CardTitle>
+                  <CardDescription className="text-muted">Gate check-in responses display here.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center justify-center min-h-[220px]">
                   {verificationResult ? (
                     <div className="text-center space-y-4 w-full">
                       {verificationResult.success ? (
                         <div className="flex flex-col items-center p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
-                          <CheckCircle className="w-12 h-12 text-emerald-400 mb-2" />
-                          <h4 className="font-bold text-emerald-400 text-lg">Verified Authentic</h4>
-                          <p className="text-slate-300 text-sm mt-2 leading-relaxed">
+                          <CheckCircle className="w-12 h-12 text-emerald-600 dark:text-emerald-400 mb-2" />
+                          <h4 className="font-bold text-emerald-600 dark:text-emerald-400 text-lg">Verified Authentic</h4>
+                          <p className="text-muted text-sm mt-2 leading-relaxed">
                             {verificationResult.message}
                           </p>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
-                          <AlertCircle className="w-12 h-12 text-red-400 mb-2" />
-                          <h4 className="font-bold text-red-400 text-lg">Validation Failed</h4>
-                          <p className="text-slate-300 text-sm mt-2 leading-relaxed">
+                          <AlertCircle className="w-12 h-12 text-red-500 mb-2" />
+                          <h4 className="font-bold text-red-550 dark:text-red-450 text-lg">Validation Failed</h4>
+                          <p className="text-muted text-sm mt-2 leading-relaxed">
                             {verificationResult.message}
                           </p>
                         </div>
                       )}
                     </div>
                   ) : (
-                    <div className="text-center text-slate-500 py-12">
-                      <ShieldCheck className="w-12 h-12 text-slate-700 mx-auto mb-2" />
+                    <div className="text-center text-muted py-12">
+                      <ShieldCheck className="w-12 h-12 text-muted mx-auto mb-2" />
                       <p className="text-sm">Scan a barcode/QR code to verify authenticity and process check-in.</p>
                     </div>
                   )}
@@ -475,34 +478,34 @@ export default function CheckinPage() {
         {activeTab === "vip" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
-              <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl">
+              <Card className="border-border bg-card shadow-sm transition-colors duration-300">
                 <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4">
                   <div>
-                    <CardTitle className="text-white text-lg">VIP Guests List</CardTitle>
-                    <CardDescription>Guests invited to the VIP lounge.</CardDescription>
+                    <CardTitle className="text-foreground text-lg transition-colors duration-300">VIP Guests List</CardTitle>
+                    <CardDescription className="text-muted">Guests invited to the VIP lounge.</CardDescription>
                   </div>
                   <div className="relative w-full sm:w-64">
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-550" />
+                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted" />
                     <Input
                       placeholder="Search VIP..."
                       value={vipSearchQuery}
                       onChange={(e) => setVipSearchQuery(e.target.value)}
-                      className="pl-9 bg-slate-950/40 border-slate-800 text-sm"
+                      className="pl-9 bg-input border-border text-sm"
                     />
                   </div>
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm whitespace-nowrap">
-                      <thead className="bg-slate-800/30 border-b border-slate-800">
+                      <thead className="bg-surface border-b border-border transition-colors duration-300">
                         <tr>
-                          <th className="px-6 py-3 font-medium text-slate-400">Name</th>
-                          <th className="px-6 py-3 font-medium text-slate-400">Email</th>
-                          <th className="px-6 py-3 font-medium text-slate-400">Sponsor</th>
-                          <th className="px-6 py-3 font-medium text-slate-400 text-right">Status / Check-in</th>
+                          <th className="px-6 py-3 font-medium text-muted">Name</th>
+                          <th className="px-6 py-3 font-medium text-muted">Email</th>
+                          <th className="px-6 py-3 font-medium text-muted">Sponsor</th>
+                          <th className="px-6 py-3 font-medium text-muted text-right">Status / Check-in</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-800/30">
+                      <tbody className="divide-y divide-border transition-colors duration-300">
                         {vipGuests.filter(g =>
                           (g.fullName || "").toLowerCase().includes(vipSearchQuery.toLowerCase()) ||
                           (g.email || "").toLowerCase().includes(vipSearchQuery.toLowerCase()) ||
@@ -513,20 +516,21 @@ export default function CheckinPage() {
                             (g.email || "").toLowerCase().includes(vipSearchQuery.toLowerCase()) ||
                             (g.sponsor || "").toLowerCase().includes(vipSearchQuery.toLowerCase())
                           ).map((guest) => (
-                            <tr key={guest.id} className="hover:bg-slate-800/10">
-                              <td className="px-6 py-4 font-medium text-white">{guest.fullName}</td>
-                              <td className="px-6 py-4 text-slate-400">{guest.email}</td>
-                              <td className="px-6 py-4 text-slate-400">{guest.sponsor}</td>
+                            <tr key={guest.id} className="hover:bg-surface/50 transition-colors duration-200">
+                              <td className="px-6 py-4 font-medium text-foreground transition-colors duration-300">{guest.fullName}</td>
+                              <td className="px-6 py-4 text-muted">{guest.email}</td>
+                              <td className="px-6 py-4 text-muted">{guest.sponsor}</td>
                               <td className="px-6 py-4 text-right">
                                 {guest.checkedInAt ? (
-                                  <Badge variant="published" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+                                  <Badge variant="published" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20">
                                     Checked In
                                   </Badge>
                                 ) : user?.role === "STAFF" ? (
                                   <Button
                                     size="sm"
-                                    variant="gradient"
+                                    variant="default"
                                     onClick={() => handleVipCheckIn(guest.id)}
+                                    className="font-semibold"
                                   >
                                     Check In
                                   </Button>
@@ -540,7 +544,7 @@ export default function CheckinPage() {
                           ))
                         ) : (
                           <tr>
-                            <td colSpan={4} className="px-6 py-10 text-center text-slate-500">
+                            <td colSpan={4} className="px-6 py-10 text-center text-muted">
                               No VIP guests found.
                             </td>
                           </tr>
@@ -549,7 +553,7 @@ export default function CheckinPage() {
                     </table>
                   </div>
                   {vipTotal > vipLimit && (
-                    <div className="p-4 border-t border-slate-800 flex justify-center gap-2 bg-slate-900/20">
+                    <div className="p-4 border-t border-border flex justify-center gap-2 bg-surface transition-colors duration-300">
                       <Button
                         variant="outline"
                         size="sm"
@@ -558,7 +562,7 @@ export default function CheckinPage() {
                       >
                         Prev
                       </Button>
-                      <span className="flex items-center px-3 text-xs text-slate-500">
+                      <span className="flex items-center px-3 text-xs text-muted">
                         Page {vipPage} of {Math.ceil(vipTotal / vipLimit)}
                       </span>
                       <Button
@@ -578,21 +582,21 @@ export default function CheckinPage() {
             {/* Right side: Import CSV (only for ORGANIZER) */}
             <div className="lg:col-span-1">
               {user?.role === "ORGANIZER" ? (
-                <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl">
+                <Card className="border-border bg-card shadow-sm transition-colors duration-300">
                   <CardHeader>
-                    <CardTitle className="text-white text-base">Import VIP Roster</CardTitle>
-                    <CardDescription>
+                    <CardTitle className="text-foreground text-base transition-colors duration-300">Import VIP Roster</CardTitle>
+                    <CardDescription className="text-muted">
                       Upload a CSV file containing VIP guest list (columns: full_name, email, sponsor).
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <form onSubmit={handleCsvImport} className="space-y-6">
-                      <div className="p-6 rounded-xl border border-dashed border-slate-700 bg-slate-800/20 flex flex-col items-center justify-center text-center">
-                        <Upload className="w-8 h-8 text-slate-500 mb-2" />
-                        <Label htmlFor="csv-upload" className="cursor-pointer text-sm font-semibold text-violet-400 hover:text-violet-300 mb-1">
+                      <div className="p-6 rounded-xl border border-dashed border-border bg-surface flex flex-col items-center justify-center text-center transition-colors duration-300">
+                        <Upload className="w-8 h-8 text-muted mb-2" />
+                        <Label htmlFor="csv-upload" className="cursor-pointer text-sm font-semibold text-primary hover:underline mb-1">
                           {csvFile ? csvFile.name : "Select CSV File"}
                         </Label>
-                        <p className="text-xs text-slate-550">Must be a valid .csv file</p>
+                        <p className="text-xs text-muted">Must be a valid .csv file</p>
                         <input
                           id="csv-upload"
                           type="file"
@@ -606,7 +610,7 @@ export default function CheckinPage() {
                         />
                       </div>
                       {csvFile && (
-                        <Button type="submit" variant="gradient" className="w-full" disabled={isImporting}>
+                        <Button type="submit" variant="default" className="w-full font-semibold" disabled={isImporting}>
                           {isImporting ? (
                             <>
                               <SpinnerIcon className="w-4 h-4 mr-2 animate-spin" /> Importing…
@@ -620,9 +624,9 @@ export default function CheckinPage() {
                   </CardContent>
                 </Card>
               ) : (
-                <Card className="border-slate-800 bg-slate-900/60 backdrop-blur-xl p-6 text-center text-slate-500">
-                  <ShieldCheck className="w-10 h-10 mx-auto text-slate-700 mb-2" />
-                  <h4 className="font-semibold text-white mb-1">Staff Access</h4>
+                <Card className="border-border bg-card p-6 text-center text-muted shadow-sm transition-colors duration-300">
+                  <ShieldCheck className="w-10 h-10 mx-auto text-muted mb-2" />
+                  <h4 className="font-semibold text-foreground mb-1 transition-colors duration-300">Staff Access</h4>
                   <p className="text-xs">Only organizers can import or manage the VIP guest roster.</p>
                 </Card>
               )}

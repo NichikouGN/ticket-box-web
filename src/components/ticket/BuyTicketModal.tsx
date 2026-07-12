@@ -29,8 +29,6 @@ interface BuyTicketModalProps {
 
 type ModalStep = "select" | "processing" | "redirect" | "waiting_payment" | "success" | "error";
 
-
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function BuyTicketModal({
@@ -127,7 +125,7 @@ export default function BuyTicketModal({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
             onClick={step !== "processing" ? handleClose : undefined}
           />
 
@@ -140,16 +138,12 @@ export default function BuyTicketModal({
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="relative w-full max-w-md bg-slate-900 border border-slate-700/50 rounded-3xl shadow-2xl shadow-black/50 pointer-events-auto overflow-hidden">
-              {/* Decorative glow */}
-              <div className="absolute -top-12 -right-12 w-48 h-48 bg-violet-600 rounded-full blur-3xl opacity-10 pointer-events-none" />
-              <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-fuchsia-600 rounded-full blur-3xl opacity-10 pointer-events-none" />
-
+            <div className="relative w-full max-w-md bg-card border border-border rounded-3xl shadow-2xl pointer-events-auto overflow-hidden transition-colors duration-300">
               {/* Close button */}
               {step !== "processing" && (
                 <button
                   onClick={handleClose}
-                  className="absolute top-4 right-4 z-10 p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                  className="absolute top-4 right-4 z-10 p-2 rounded-xl text-muted hover:text-foreground hover:bg-surface transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -166,31 +160,31 @@ export default function BuyTicketModal({
                     className="p-8"
                   >
                     <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center">
-                        <Ticket className="w-5 h-5 text-white" />
+                      <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center transition-colors duration-300">
+                        <Ticket className="w-5 h-5 text-primary-foreground" />
                       </div>
                       <div>
-                        <p className="text-xs text-slate-400 font-medium uppercase tracking-widest">Purchase Tickets</p>
-                        <h2 className="text-lg font-bold text-white leading-tight">{concertTitle}</h2>
+                        <p className="text-xs text-muted font-medium uppercase tracking-widest">Purchase Tickets</p>
+                        <h2 className="text-lg font-bold text-foreground leading-tight transition-colors duration-300">{concertTitle}</h2>
                       </div>
                     </div>
 
                     {/* Ticket Type Card */}
-                    <div className="bg-slate-800/60 rounded-2xl border border-slate-700/50 p-5 mb-6">
+                    <div className="bg-surface rounded-2xl border border-border p-5 mb-6 transition-colors duration-300">
                       <div className="flex justify-between items-start">
                         <div>
-                          <h3 className="font-semibold text-white text-lg">{ticketType.name}</h3>
-                          <p className="text-slate-400 text-sm mt-1">Max {ticketType.maxPerUser} per person</p>
+                          <h3 className="font-semibold text-foreground text-lg transition-colors duration-300">{ticketType.name}</h3>
+                          <p className="text-muted text-sm mt-1">Max {ticketType.maxPerUser} per person</p>
                         </div>
-                        <span className="text-2xl font-bold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+                        <span className="text-2xl font-bold text-primary transition-colors duration-300">
                           ${ticketType.price.toLocaleString()}
                         </span>
                       </div>
 
                       {/* Stock badge */}
                       <div className="mt-3 flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full ${availableStock < 20 ? "bg-orange-400" : "bg-emerald-400"}`} />
-                        <span className={`text-xs font-medium ${availableStock < 20 ? "text-orange-400" : "text-emerald-400"}`}>
+                        <div className={`w-2 h-2 rounded-full ${availableStock < 20 ? "bg-orange-400" : "bg-emerald-500"}`} />
+                        <span className={`text-xs font-medium ${availableStock < 20 ? "text-orange-500" : "text-emerald-500"}`}>
                           {availableStock < 20 ? `Only ${availableStock} remaining!` : `${availableStock} available`}
                         </span>
                       </div>
@@ -198,23 +192,23 @@ export default function BuyTicketModal({
 
                     {/* Quantity Selector */}
                     <div className="mb-6">
-                      <label className="block text-sm font-medium text-slate-300 mb-3">Quantity</label>
+                      <label className="block text-sm font-medium text-muted mb-3">Quantity</label>
                       <div className="flex items-center gap-4">
                         <button
                           onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                           disabled={quantity <= 1}
-                          className="w-11 h-11 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-white hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                          className="w-11 h-11 rounded-xl bg-surface border border-border flex items-center justify-center text-foreground hover:bg-card disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200"
                         >
                           <Minus className="w-4 h-4" />
                         </button>
                         <div className="flex-1 text-center">
-                          <span className="text-3xl font-bold text-white">{quantity}</span>
-                          <p className="text-xs text-slate-500 mt-1">ticket{quantity !== 1 ? "s" : ""}</p>
+                          <span className="text-3xl font-bold text-foreground transition-colors duration-300">{quantity}</span>
+                          <p className="text-xs text-muted mt-1">ticket{quantity !== 1 ? "s" : ""}</p>
                         </div>
                         <button
                           onClick={() => setQuantity((q) => Math.min(maxQty, q + 1))}
                           disabled={quantity >= maxQty}
-                          className="w-11 h-11 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-white hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                          className="w-11 h-11 rounded-xl bg-surface border border-border flex items-center justify-center text-foreground hover:bg-card disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200"
                         >
                           <Plus className="w-4 h-4" />
                         </button>
@@ -222,17 +216,17 @@ export default function BuyTicketModal({
                     </div>
 
                     {/* Total */}
-                    <div className="flex items-center justify-between py-4 border-t border-slate-700/50 mb-6">
-                      <span className="text-slate-400 font-medium">Total</span>
-                      <span className="text-2xl font-bold text-white">
+                    <div className="flex items-center justify-between py-4 border-t border-border mb-6 transition-colors duration-300">
+                      <span className="text-muted font-medium">Total</span>
+                      <span className="text-2xl font-bold text-foreground transition-colors duration-300">
                         ${totalPrice.toLocaleString()}
                       </span>
                     </div>
 
                     {/* Buy Button */}
                     <Button
-                      className="w-full"
-                      variant="gradient"
+                      className="w-full font-semibold"
+                      variant="default"
                       size="lg"
                       onClick={handleBuy}
                     >
@@ -241,7 +235,7 @@ export default function BuyTicketModal({
                     </Button>
 
                     {/* Trust badge */}
-                    <div className="mt-4 flex items-center justify-center gap-2 text-slate-500 text-xs">
+                    <div className="mt-4 flex items-center justify-center gap-2 text-muted text-xs">
                       <ShieldCheck className="w-3.5 h-3.5" />
                       <span>Secured by Stripe. Your seat is held for 10 minutes.</span>
                     </div>
@@ -258,19 +252,18 @@ export default function BuyTicketModal({
                     className="p-8 flex flex-col items-center justify-center min-h-[320px] text-center"
                   >
                     <div className="relative mb-6">
-                      <div className="w-20 h-20 rounded-full border-2 border-slate-700 flex items-center justify-center">
+                      <div className="w-20 h-20 rounded-full border-2 border-border flex items-center justify-center transition-colors duration-300">
                         <motion.div
                           animate={{ rotate: 360 }}
                           transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
                         >
-                          <Loader2 className="w-10 h-10 text-violet-400" />
+                          <Loader2 className="w-10 h-10 text-primary" />
                         </motion.div>
                       </div>
-                      <div className="absolute inset-0 rounded-full bg-violet-500/10 blur-xl" />
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-2">Reserving your tickets…</h3>
-                    <p className="text-slate-400 text-sm max-w-xs">{processingMsg}</p>
-                    <div className="mt-6 flex items-center gap-2 text-slate-500 text-xs">
+                    <h3 className="text-xl font-bold text-foreground mb-2 transition-colors duration-300">Reserving your tickets…</h3>
+                    <p className="text-muted text-sm max-w-xs">{processingMsg}</p>
+                    <div className="mt-6 flex items-center gap-2 text-muted text-xs">
                       <Clock className="w-3.5 h-3.5" />
                       <span>This usually takes just a few seconds</span>
                     </div>
@@ -292,26 +285,26 @@ export default function BuyTicketModal({
                       transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
                       className="w-20 h-20 rounded-full bg-emerald-500/15 border-2 border-emerald-500/30 flex items-center justify-center mb-6"
                     >
-                      <ShieldCheck className="w-10 h-10 text-emerald-400" />
+                      <ShieldCheck className="w-10 h-10 text-emerald-600 dark:text-emerald-400" />
                     </motion.div>
-                    <h3 className="text-xl font-bold text-white mb-2">Tickets Reserved!</h3>
-                    <p className="text-slate-400 text-sm mb-2">
-                      Your seat is held for <span className="text-white font-semibold">10 minutes</span>.
+                    <h3 className="text-xl font-bold text-foreground mb-2 transition-colors duration-300">Tickets Reserved!</h3>
+                    <p className="text-muted text-sm mb-2">
+                      Your seat is held for <span className="text-foreground font-semibold">10 minutes</span>.
                       Complete payment to confirm your booking.
                     </p>
-                    <div className="w-full bg-slate-800/60 rounded-2xl border border-slate-700/50 p-4 my-6 text-left space-y-2">
+                    <div className="w-full bg-surface rounded-2xl border border-border p-4 my-6 text-left space-y-2 transition-colors duration-300">
                       <div className="flex justify-between text-sm">
-                        <span className="text-slate-400">Ticket</span>
-                        <span className="text-white font-medium">{ticketType.name} × {quantity}</span>
+                        <span className="text-muted">Ticket</span>
+                        <span className="text-foreground font-medium transition-colors duration-300">{ticketType.name} × {quantity}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-slate-400">Total</span>
-                        <span className="text-violet-400 font-bold text-base">${totalPrice.toLocaleString()}</span>
+                        <span className="text-muted">Total</span>
+                        <span className="text-primary font-bold text-base transition-colors duration-300">${totalPrice.toLocaleString()}</span>
                       </div>
                     </div>
                     <Button
-                      className="w-full"
-                      variant="gradient"
+                      className="w-full font-semibold"
+                      variant="default"
                       size="lg"
                       onClick={() => {
                         window.open(paymentUrl, "_blank");
@@ -344,7 +337,7 @@ export default function BuyTicketModal({
                     </Button>
                     <button
                       onClick={handleClose}
-                      className="mt-3 text-sm text-slate-500 hover:text-slate-300 transition-colors"
+                      className="mt-3 text-sm text-muted hover:text-foreground transition-colors duration-200"
                     >
                       I'll pay later
                     </button>
@@ -361,21 +354,20 @@ export default function BuyTicketModal({
                     className="p-8 flex flex-col items-center justify-center min-h-[320px] text-center"
                   >
                     <div className="relative mb-6">
-                      <div className="w-20 h-20 rounded-full border-2 border-slate-700 flex items-center justify-center">
+                      <div className="w-20 h-20 rounded-full border-2 border-border flex items-center justify-center transition-colors duration-300">
                         <motion.div
                           animate={{ rotate: 360 }}
                           transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
                         >
-                          <Loader2 className="w-10 h-10 text-violet-400" />
+                          <Loader2 className="w-10 h-10 text-primary" />
                         </motion.div>
                       </div>
-                      <div className="absolute inset-0 rounded-full bg-violet-500/10 blur-xl" />
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-2">Waiting for Payment</h3>
-                    <p className="text-slate-400 text-sm max-w-xs">Please complete your payment in the new tab. We are waiting for confirmation...</p>
+                    <h3 className="text-xl font-bold text-foreground mb-2 transition-colors duration-300">Waiting for Payment</h3>
+                    <p className="text-muted text-sm max-w-xs">Please complete your payment in the new tab. We are waiting for confirmation...</p>
                     <button
                       onClick={handleClose}
-                      className="mt-6 text-sm text-slate-500 hover:text-slate-300 transition-colors"
+                      className="mt-6 text-sm text-muted hover:text-foreground transition-colors duration-200"
                     >
                       Cancel
                     </button>
@@ -397,13 +389,13 @@ export default function BuyTicketModal({
                       transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
                       className="w-20 h-20 rounded-full bg-emerald-500/15 border-2 border-emerald-500/30 flex items-center justify-center mb-6"
                     >
-                      <ShieldCheck className="w-10 h-10 text-emerald-400" />
+                      <ShieldCheck className="w-10 h-10 text-emerald-600 dark:text-emerald-400" />
                     </motion.div>
-                    <h3 className="text-xl font-bold text-white mb-2">Payment Successful!</h3>
-                    <p className="text-slate-400 text-sm mb-6">
+                    <h3 className="text-xl font-bold text-foreground mb-2 transition-colors duration-300">Payment Successful!</h3>
+                    <p className="text-muted text-sm mb-6">
                       Your payment was confirmed. Redirecting to your tickets...
                     </p>
-                    <Loader2 className="w-6 h-6 text-violet-400 animate-spin" />
+                    <Loader2 className="w-6 h-6 text-primary animate-spin" />
                   </motion.div>
                 )}
 
@@ -417,14 +409,14 @@ export default function BuyTicketModal({
                     className="p-8 flex flex-col items-center text-center"
                   >
                     <div className="w-20 h-20 rounded-full bg-red-500/15 border-2 border-red-500/30 flex items-center justify-center mb-6">
-                      <AlertCircle className="w-10 h-10 text-red-400" />
+                      <AlertCircle className="w-10 h-10 text-red-550 dark:text-red-450" />
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-2">Something went wrong</h3>
-                    <p className="text-red-400 text-sm mb-8 max-w-xs">{errorMsg}</p>
+                    <h3 className="text-xl font-bold text-foreground mb-2 transition-colors duration-300">Something went wrong</h3>
+                    <p className="text-red-500 text-sm mb-8 max-w-xs">{errorMsg}</p>
                     <div className="flex gap-3 w-full">
                       <Button
                         variant="outline"
-                        className="flex-1"
+                        className="flex-1 border-border"
                         onClick={() => {
                           setStep("select");
                           setErrorMsg(null);
@@ -446,3 +438,4 @@ export default function BuyTicketModal({
     </AnimatePresence>
   );
 }
+

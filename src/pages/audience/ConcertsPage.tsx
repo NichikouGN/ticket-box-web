@@ -44,17 +44,17 @@ export default function ConcertsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/15 text-violet-400 border border-violet-500/20 text-sm font-medium mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-sm font-medium mb-4">
             <Sparkles className="w-4 h-4" />
             <span>Featured Events</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-4">
             Discover Live{" "}
-            <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+            <span className="text-primary">
               Music
             </span>
           </h1>
-          <p className="text-slate-400 max-w-2xl mx-auto">
+          <p className="text-muted max-w-2xl mx-auto">
             Find and book tickets for the best concerts, festivals, and live performances happening around you.
           </p>
         </motion.div>
@@ -108,7 +108,7 @@ export default function ConcertsPage() {
                 >
                   Previous
                 </Button>
-                <div className="flex items-center px-4 text-sm text-slate-400">
+                <div className="flex items-center px-4 text-sm text-muted">
                   Page {page} of {totalPages}
                 </div>
                 <Button
@@ -125,11 +125,11 @@ export default function ConcertsPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-24 bg-slate-900/50 rounded-3xl border border-slate-800"
+            className="text-center py-24 bg-card rounded-3xl border border-border"
           >
-            <CalendarX className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">No upcoming events</h3>
-            <p className="text-slate-400">Check back later for new concerts and festivals.</p>
+            <CalendarX className="w-16 h-16 text-muted mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-foreground mb-2">No upcoming events</h3>
+            <p className="text-muted">Check back later for new concerts and festivals.</p>
           </motion.div>
         )}
       </div>

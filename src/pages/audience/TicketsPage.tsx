@@ -146,13 +146,13 @@ export default function TicketsPage() {
     <AppLayout>
       <div className="max-w-5xl mx-auto px-4 md:px-6 py-12 pb-24">
         <div className="mb-10">
-          <h1 className="text-3xl font-bold text-white">My Tickets</h1>
-          <p className="text-slate-400 mt-1">Access your concert tickets and QR codes for entry</p>
+          <h1 className="text-3xl font-bold text-foreground">My Tickets</h1>
+          <p className="text-muted mt-1">Access your concert tickets and QR codes for entry</p>
         </div>
 
         {error && (
           <div className="text-center p-8 bg-red-500/10 rounded-2xl border border-red-500/20 mb-8">
-            <p className="text-red-400">{error}</p>
+            <p className="text-red-500">{error}</p>
             <Button variant="outline" className="mt-4" onClick={loadData}>
               Try Again
             </Button>
@@ -162,7 +162,7 @@ export default function TicketsPage() {
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="flex gap-4 p-5 rounded-2xl bg-slate-900 border border-slate-800">
+              <div key={i} className="flex gap-4 p-5 rounded-2xl bg-card border border-border">
                 <Skeleton className="w-24 h-24 rounded-xl shrink-0" />
                 <div className="space-y-2 flex-1">
                   <Skeleton className="h-6 w-3/4" />
@@ -197,17 +197,17 @@ export default function TicketsPage() {
                   className="cursor-pointer"
                   onClick={() => handleOpenTicket(ticket)}
                 >
-                  <Card className="border-slate-800 bg-slate-900/60 hover:bg-slate-900/80 hover:border-slate-700/80 backdrop-blur-xl transition-all duration-300 overflow-hidden relative">
-                    <div className="absolute top-0 right-0 h-full w-2 bg-gradient-to-b from-violet-500 to-fuchsia-500" />
+                  <Card className="border-border bg-card/60 hover:bg-card hover:border-primary/35 transition-all duration-300 overflow-hidden relative shadow-sm">
+                    <div className="absolute top-0 right-0 h-full w-1.5 bg-primary transition-colors duration-300" />
                     
                     <CardContent className="p-6 flex gap-5">
                       {/* Event thumbnail */}
-                      <div className="w-24 h-24 rounded-xl bg-slate-800 border border-slate-700 overflow-hidden shrink-0">
+                      <div className="w-24 h-24 rounded-xl bg-surface border border-border overflow-hidden shrink-0 transition-colors duration-300">
                         {concert?.thumbnailUrl ? (
                           <img src={concert.thumbnailUrl} className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <TicketIcon className="w-10 h-10 text-slate-650" />
+                            <TicketIcon className="w-10 h-10 text-muted/50" />
                           </div>
                         )}
                       </div>
@@ -215,7 +215,7 @@ export default function TicketsPage() {
                       {/* Ticket Details */}
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start gap-2 mb-1.5">
-                          <h2 className="font-bold text-white text-lg truncate leading-tight">
+                          <h2 className="font-bold text-foreground text-lg truncate leading-tight transition-colors duration-300">
                             {concert?.title || "Concert Event"}
                           </h2>
                           <Badge variant={ticket.status === "UNUSED" ? "published" : "secondary"} className="shrink-0">
@@ -223,19 +223,19 @@ export default function TicketsPage() {
                           </Badge>
                         </div>
 
-                        <div className="flex items-center gap-1.5 text-slate-400 text-sm mb-1">
+                        <div className="flex items-center gap-1.5 text-muted text-sm mb-1 transition-colors duration-300">
                           <Calendar className="w-3.5 h-3.5" />
                           <span className="truncate">{formattedDate}</span>
                         </div>
 
-                        <div className="flex items-center gap-1.5 text-slate-400 text-sm mb-3">
+                        <div className="flex items-center gap-1.5 text-muted text-sm mb-3 transition-colors duration-300">
                           <MapPin className="w-3.5 h-3.5" />
                           <span className="truncate">{concert?.venue || "Concert Venue"}</span>
                         </div>
 
-                        <div className="border-t border-slate-850 pt-2 flex justify-between items-center text-xs">
-                          <span className="text-violet-400 font-semibold">{ticketName}</span>
-                          <span className="text-slate-500 uppercase tracking-widest font-mono">
+                        <div className="border-t border-border pt-2 flex justify-between items-center text-xs transition-colors duration-300">
+                          <span className="text-primary font-semibold transition-colors duration-300">{ticketName}</span>
+                          <span className="text-muted font-mono">
                             #{ticket.ticketId.slice(0, 8)}
                           </span>
                         </div>
@@ -247,10 +247,10 @@ export default function TicketsPage() {
             })}
           </div>
         ) : (
-          <div className="text-center py-24 bg-slate-900/30 rounded-3xl border border-slate-800">
-            <TicketIcon className="w-16 h-16 text-slate-700 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">No tickets found</h3>
-            <p className="text-slate-400 max-w-sm mx-auto">
+          <div className="text-center py-24 bg-card rounded-3xl border border-border shadow-sm transition-colors duration-300">
+            <TicketIcon className="w-16 h-16 text-muted mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-foreground mb-2">No tickets found</h3>
+            <p className="text-muted max-w-sm mx-auto">
               You haven't purchased any tickets yet. Explore upcoming concerts to buy your tickets!
             </p>
           </div>
@@ -265,7 +265,7 @@ export default function TicketsPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md"
+                className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
                 onClick={handleCloseTicket}
               />
 
@@ -276,35 +276,31 @@ export default function TicketsPage() {
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 className="fixed inset-0 z-50 flex items-center justify-center p-4"
               >
-                <div className="relative w-full max-w-md bg-slate-900 border border-slate-700/60 rounded-3xl shadow-2xl p-6 overflow-hidden">
-                  {/* Glowing highlights */}
-                  <div className="absolute -top-12 -right-12 w-48 h-48 bg-violet-600 rounded-full blur-3xl opacity-10 pointer-events-none" />
-                  <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-fuchsia-600 rounded-full blur-3xl opacity-10 pointer-events-none" />
-
+                <div className="relative w-full max-w-md bg-card border border-border rounded-3xl shadow-2xl p-6 overflow-hidden transition-colors duration-300">
                   {/* Close button */}
                   <button
                     onClick={handleCloseTicket}
-                    className="absolute top-4 right-4 p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                    className="absolute top-4 right-4 p-2 rounded-xl text-muted hover:text-foreground hover:bg-surface transition-colors"
                   >
                     <X className="w-5 h-5" />
                   </button>
 
                   {/* Modal Header */}
                   <div className="text-center mb-6">
-                    <h3 className="text-xl font-bold text-white">Entry Ticket</h3>
-                    <p className="text-sm text-slate-400 mt-1">Present this QR code at the venue gate</p>
+                    <h3 className="text-xl font-bold text-foreground">Entry Ticket</h3>
+                    <p className="text-sm text-muted mt-1">Present this QR code at the venue gate</p>
                   </div>
 
                   {isLoadingDetail ? (
                     <div className="flex flex-col items-center justify-center py-12 space-y-4">
-                      <Loader2 className="w-10 h-10 text-violet-500 animate-spin" />
-                      <p className="text-slate-400 text-sm">Generating secure signature…</p>
+                      <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                      <p className="text-muted text-sm">Generating secure signature…</p>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center">
                       {/* Event details summary */}
-                      <div className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl p-4 mb-6">
-                        <h4 className="font-bold text-white text-base text-center">
+                      <div className="w-full bg-surface border border-border rounded-2xl p-4 mb-6 transition-colors duration-300">
+                        <h4 className="font-bold text-foreground text-base text-center">
                           {concerts[selectedTicket.concertId]?.title || "Concert Event"}
                         </h4>
                         <div className="flex justify-center gap-2 mt-2">
@@ -319,7 +315,7 @@ export default function TicketsPage() {
 
                       {/* QR Display */}
                       {selectedTicket.status === "UNUSED" ? (
-                        <div className="bg-white p-4 rounded-2xl shadow-xl shadow-black/40 mb-6">
+                        <div className="bg-white p-4 rounded-2xl shadow-md mb-6">
                           {getQrCodeUrl() ? (
                             <img src={getQrCodeUrl()} alt="Ticket QR Code" className="w-[200px] h-[200px]" />
                           ) : (
@@ -329,23 +325,23 @@ export default function TicketsPage() {
                           )}
                         </div>
                       ) : (
-                        <div className="w-[230px] h-[230px] border border-dashed border-slate-700 bg-slate-950/20 rounded-2xl flex flex-col items-center justify-center text-center p-4 mb-6">
-                          <CheckCircle2 className="w-12 h-12 text-slate-650 mb-2" />
-                          <span className="font-bold text-slate-400">Ticket Used</span>
-                          <span className="text-xs text-slate-500 mt-1">This ticket has already been checked in.</span>
+                        <div className="w-[230px] h-[230px] border border-dashed border-border bg-surface rounded-2xl flex flex-col items-center justify-center text-center p-4 mb-6 transition-colors duration-300">
+                          <CheckCircle2 className="w-12 h-12 text-muted mb-2" />
+                          <span className="font-bold text-muted">Ticket Used</span>
+                          <span className="text-xs text-muted/80 mt-1">This ticket has already been checked in.</span>
                         </div>
                       )}
 
                       {/* Security Verification Information */}
-                      <div className="w-full bg-slate-950/30 border border-slate-850 rounded-2xl p-3.5 text-center text-xs space-y-1.5">
-                        <div className="flex justify-between text-slate-500">
+                      <div className="w-full bg-surface border border-border rounded-2xl p-3.5 text-center text-xs space-y-1.5 transition-colors duration-300">
+                        <div className="flex justify-between text-muted">
                           <span>Ticket ID</span>
-                          <span className="font-mono text-slate-400">{selectedTicket.ticketId}</span>
+                          <span className="font-mono text-foreground/80">{selectedTicket.ticketId}</span>
                         </div>
                         {signature && (
-                          <div className="flex justify-between text-slate-550 items-center">
+                          <div className="flex justify-between text-muted items-center">
                             <span>Cryptographic Proof</span>
-                            <span className="font-medium text-emerald-400 flex items-center gap-1">
+                            <span className="font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                               <CheckCircle2 className="w-3.5 h-3.5" /> Verified Authentic
                             </span>
                           </div>
@@ -363,6 +359,11 @@ export default function TicketsPage() {
   );
 }
 
-function Loader2({ className, ...props }: any) {
+type LoaderProps = {
+  className?: string;
+  [key: string]: any;
+};
+
+function Loader2({ className, ...props }: LoaderProps) {
   return <Clock className={`animate-spin ${className}`} {...props} />;
 }
