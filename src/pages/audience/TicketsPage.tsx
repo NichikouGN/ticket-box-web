@@ -129,10 +129,12 @@ export default function TicketsPage() {
   const getQrCodeUrl = () => {
     if (!signedDetail || !signature) return "";
     const payload = {
-      ticketId: signedDetail.ticketId,
-      userId: signedDetail.userId,
-      concertId: signedDetail.concertId,
-      ticketTypeId: signedDetail.ticketTypeId,
+      ticket: {
+        ticketId: signedDetail.ticketId,
+        userId: signedDetail.userId,
+        concertId: signedDetail.concertId,
+        ticketTypeId: signedDetail.ticketTypeId,
+      },
       signature: signature,
     };
     return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(
