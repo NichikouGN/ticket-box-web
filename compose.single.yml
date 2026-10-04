@@ -1,0 +1,356 @@
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis-ticket-box
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "6379:6379"
+    command: >
+      redis-server --appendonly yes --appendfsync everysec --maxmemory 2gb --maxmemory-policy noeviction --timeout 0
+    volumes:
+      - redis-data:/data
+    restart: always
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight
+    ports:
+      - "5540:5540"
+    depends_on:
+      - redis
+
+
+  api-gateway:
+    build:
+      context: ./ticket-box-backend
+      dockerfile: services/api-gateway/Dockerfile
+      target: single-stage
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./ticket-box-backend/services/api-gateway/.env
+    environment:
+      - SERVICE_NAME=api-gateway
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+      - USER_SERVICE_URL=http://user-service:3000
+      - CONCERT_SERVICE_URL=http://concert-service:3000
+      - ORDER_SERVICE_URL=http://order-service:3000
+      - PAYMENT_SERVICE_URL=http://payment-service:3000
+      - TICKET_SERVICE_URL=http://ticket-service:3000
+      - NOTIFICATION_SERVICE_URL=http://notification-service:3000
+    depends_on:
+      - postgres
+    volumes:
+      - ./ticket-box-backend/services/api-gateway:/app/services/api-gateway
+    
+
+  ticket-box-frontend:
+    build:
+      context: ./ticket-box-web
+      dockerfile: Dockerfile
+      target: single-stage
+    ports:
+      - "5173:5173"
+    env_file:
+      - ./ticket-box-web/.env
+    # environment:
+    #   - VITE_API_URL=http://api-gateway:3000/api/v1
+    volumes:
+      - ./ticket-box-web/:/app/
+      - frontend-node-modules:/app/node_modules
+    depends_on:
+      - api-gateway
+
+  user-service:
+    build:
+      context: ./ticket-box-backend
+      dockerfile: services/user-service/Dockerfile
+      target: single-stage
+    env_file:
+      - ./ticket-box-backend/services/user-service/.env
+    environment:
+      - SERVICE_NAME=user-service
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/mydb
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./ticket-box-backend/services/user-service:/app/services/user-service
+
+  concert-service:
+    build:
+      context: ./ticket-box-backend
+      dockerfile: services/concert-service/Dockerfile
+      target: single-stage
+    env_file:
+      - ./ticket-box-backend/services/concert-service/.env
+    environment:
+      - SERVICE_NAME=concert-service
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/mydb
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./ticket-box-backend/services/concert-service:/app/services/concert-service
+
+  concert-relay:
+    build:
+      context: ./ticket-box-backend
+      dockerfile: services/concert-service/Dockerfile
+      target: single-stage
+    command: npm run relay
+    env_file:
+      - ./ticket-box-backend/services/concert-service/.env
+    environment:
+      - SERVICE_NAME=concert-relay
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/mydb
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./ticket-box-backend/services/concert-service:/app/services/concert-service
+
+  order-service:
+    build:
+      context: ./ticket-box-backend
+      dockerfile: services/order-service/Dockerfile
+      target: single-stage
+    env_file:
+      - ./ticket-box-backend/services/order-service/.env
+    environment:
+      - SERVICE_NAME=order-service
+      - REDIS_URL=redis://redis:6379
+      - USER_SERVICE_URL=http://user-service:3000
+      - CONCERT_SERVICE_URL=http://concert-service:3000
+      - PAYMENT_SERVICE_URL=http://payment-service:3000
+      - PORT=3000
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/mydb
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./ticket-box-backend/services/order-service:/app/services/order-service
+
+  order-relay:
+    build:
+      context: ./ticket-box-backend
+      dockerfile: services/order-service/Dockerfile
+      target: single-stage
+    command: npm run relay
+    env_file:
+      - ./ticket-box-backend/services/order-service/.env
+    environment:
+      - SERVICE_NAME=order-relay
+      - REDIS_URL=redis://redis:6379
+      - USER_SERVICE_URL=http://user-service:3000
+      - CONCERT_SERVICE_URL=http://concert-service:3000
+      - PAYMENT_SERVICE_URL=http://payment-service:3000
+      - PORT=3000
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/mydb
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./ticket-box-backend/services/order-service:/app/services/order-service
+
+  order-cron:
+    build:
+      context: ./ticket-box-backend
+      dockerfile: services/order-service/Dockerfile
+      target: single-stage
+    command: npm run cron
+    env_file:
+      - ./ticket-box-backend/services/order-service/.env
+    environment:
+      - SERVICE_NAME=order-cron
+      - REDIS_URL=redis://redis:6379
+      - USER_SERVICE_URL=http://user-service:3000
+      - CONCERT_SERVICE_URL=http://concert-service:3000
+      - PAYMENT_SERVICE_URL=http://payment-service:3000
+      - PORT=3000
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/mydb
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./ticket-box-backend/services/order-service:/app/services/order-service
+
+  payment-service:
+    build:
+      context: ./ticket-box-backend
+      dockerfile: services/payment-service/Dockerfile
+      target: single-stage
+    ports:
+      - "3004:3000"
+    env_file:
+      - ./ticket-box-backend/services/payment-service/.env
+    environment:
+      - SERVICE_NAME=payment-service
+      - REDIS_URL=redis://redis:6379
+      - PORT=3000
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/mydb
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./ticket-box-backend/services/payment-service:/app/services/payment-service
+
+  payment-relay:
+    build:
+      context: ./ticket-box-backend
+      dockerfile: services/payment-service/Dockerfile
+      target: single-stage
+    command: npm run relay
+    env_file:
+      - ./ticket-box-backend/services/payment-service/.env
+    environment:
+      - SERVICE_NAME=payment-relay
+      - REDIS_URL=redis://redis:6379
+      - PORT=3000
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/mydb
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./ticket-box-backend/services/payment-service:/app/services/payment-service
+
+  payment-cron:
+    build:
+      context: ./ticket-box-backend
+      dockerfile: services/payment-service/Dockerfile
+      target: single-stage
+    command: npm run cron
+    env_file:
+      - ./ticket-box-backend/services/payment-service/.env
+    environment:
+      - SERVICE_NAME=payment-cron
+      - REDIS_URL=redis://redis:6379
+      - PORT=3000
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/mydb
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./ticket-box-backend/services/payment-service:/app/services/payment-service
+
+  ticket-service:
+    build:
+      context: ./ticket-box-backend
+      dockerfile: services/ticket-service/Dockerfile
+      target: single-stage
+    environment:
+      - SERVICE_NAME=ticket-service
+      - REDIS_URL=redis://redis:6379
+      - CONCERT_SERVICE_URL=http://concert-service:3000
+      - PORT=3000
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/mydb
+    env_file:
+      - ./ticket-box-backend/services/ticket-service/.env
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./ticket-box-backend/services/ticket-service:/app/services/ticket-service
+
+  notification-service:
+    build:
+      context: ./ticket-box-backend
+      dockerfile: services/notification-service/Dockerfile
+      target: single-stage
+    env_file:
+      - ./ticket-box-backend/services/notification-service/.env
+    environment:
+      - SERVICE_NAME=notification-service
+      - REDIS_URL=redis://redis:6379
+      - ORDER_SERVICE_URL=http://order-service:3000
+      - PORT=3000
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/mydb
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./ticket-box-backend/services/notification-service:/app/services/notification-service
+
+  notification-relay:
+    build:
+      context: ./ticket-box-backend
+      dockerfile: services/notification-service/Dockerfile
+      target: single-stage
+    command: npm run relay
+    env_file:
+      - ./ticket-box-backend/services/notification-service/.env
+    environment:
+      - SERVICE_NAME=notification-relay
+      - REDIS_URL=redis://redis:6379
+      - PORT=3000
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/mydb
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./ticket-box-backend/services/notification-service:/app/services/notification-service
+
+  notification-cron:
+    build:
+      context: ./ticket-box-backend
+      dockerfile: services/notification-service/Dockerfile
+      target: single-stage
+    command: npm run cron:notification
+    env_file:
+      - ./ticket-box-backend/services/notification-service/.env
+    environment:
+      - SERVICE_NAME=notification-cron
+      - REDIS_URL=redis://redis:6379
+      - PORT=3000
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/mydb
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./ticket-box-backend/services/notification-service:/app/services/notification-service
+
+  reminder-cron:
+    build:
+      context: ./ticket-box-backend
+      dockerfile: services/notification-service/Dockerfile
+      target: single-stage
+    command: npm run cron:reminder
+    env_file:
+      - ./ticket-box-backend/services/notification-service/.env
+    environment:
+      - SERVICE_NAME=reminder-cron
+      - REDIS_URL=redis://redis:6379
+      - PORT=3000
+      - DB_URL=postgresql://postgres:postgres@postgres:5432/mydb
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./ticket-box-backend/services/notification-service:/app/services/notification-service
+
+volumes:
+  redis-data:
+  frontend-node-modules:
+  postgres-data:
