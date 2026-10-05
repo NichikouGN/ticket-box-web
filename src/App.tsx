@@ -26,6 +26,9 @@ import PaymentCancelledPage from "@/pages/PaymentCancelledPage";
 
 import { Toaster } from "sonner";
 
+// Main App Component
+// Hello World
+
 function App() {
   return (
     <BrowserRouter>
