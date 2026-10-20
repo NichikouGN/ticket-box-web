@@ -21,6 +21,7 @@ export default function ConcertsPage() {
       const response = await concertService.listConcerts(pageNum, 12);
       if (response.success) {
         setConcerts(response.data);
+        console.log("Fetched concerts:", response.data);
         setTotalPages(page + (response.data.length === 12 ? 1 : 0));
       } else {
         setError("Failed to load concerts");

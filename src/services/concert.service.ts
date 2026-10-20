@@ -12,6 +12,7 @@ export interface ConcertListItem {
   eventDate: string;
   status: ConcertStatus;
   thumbnailUrl: string | null;
+  // coverImage: string | null;
 }
 
 export interface ConcertDetailArtist {
